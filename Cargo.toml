@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "datafusion-optd-cli",
+    "optd-core"
+]
+
+resolver = "2"
