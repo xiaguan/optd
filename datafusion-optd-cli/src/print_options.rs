@@ -64,11 +64,7 @@ pub struct PrintOptions {
     pub maxrows: MaxRows,
 }
 
-fn get_timing_info_str(
-    row_count: usize,
-    maxrows: MaxRows,
-    query_start_time: Instant,
-) -> String {
+fn get_timing_info_str(row_count: usize, maxrows: MaxRows, query_start_time: Instant) -> String {
     let row_word = if row_count == 1 { "row" } else { "rows" };
     let nrows_shown_msg = match maxrows {
         MaxRows::Limited(nrows) if nrows < row_count => format!(" ({} shown)", nrows),
@@ -86,11 +82,7 @@ fn get_timing_info_str(
 
 impl PrintOptions {
     /// print the batches to stdout using the specified format
-    pub fn print_batches(
-        &self,
-        batches: &[RecordBatch],
-        query_start_time: Instant,
-    ) -> Result<()> {
+    pub fn print_batches(&self, batches: &[RecordBatch], query_start_time: Instant) -> Result<()> {
         let row_count: usize = batches.iter().map(|b| b.num_rows()).sum();
         // Elapsed time should not count time for printing batches
         let timing_info = get_timing_info_str(row_count, self.maxrows, query_start_time);

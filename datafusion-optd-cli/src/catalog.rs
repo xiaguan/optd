@@ -18,9 +18,7 @@
 use async_trait::async_trait;
 use datafusion::catalog::schema::SchemaProvider;
 use datafusion::catalog::{CatalogList, CatalogProvider};
-use datafusion::datasource::listing::{
-    ListingTable, ListingTableConfig, ListingTableUrl,
-};
+use datafusion::datasource::listing::{ListingTable, ListingTableConfig, ListingTableUrl};
 use datafusion::datasource::TableProvider;
 use datafusion::error::Result;
 use datafusion::execution::context::SessionState;
@@ -73,10 +71,7 @@ struct DynamicFileCatalogProvider {
 }
 
 impl DynamicFileCatalogProvider {
-    pub fn new(
-        inner: Arc<dyn CatalogProvider>,
-        state: Weak<RwLock<SessionState>>,
-    ) -> Self {
+    pub fn new(inner: Arc<dyn CatalogProvider>, state: Weak<RwLock<SessionState>>) -> Self {
         Self { inner, state }
     }
 }
@@ -113,10 +108,7 @@ struct DynamicFileSchemaProvider {
 }
 
 impl DynamicFileSchemaProvider {
-    pub fn new(
-        inner: Arc<dyn SchemaProvider>,
-        state: Weak<RwLock<SessionState>>,
-    ) -> Self {
+    pub fn new(inner: Arc<dyn SchemaProvider>, state: Weak<RwLock<SessionState>>) -> Self {
         Self { inner, state }
     }
 }

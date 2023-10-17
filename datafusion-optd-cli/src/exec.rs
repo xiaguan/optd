@@ -21,8 +21,7 @@ use crate::{
     command::{Command, OutputFormat},
     helper::{unescape_input, CliHelper},
     object_storage::{
-        get_gcs_object_store_builder, get_oss_object_store_builder,
-        get_s3_object_store_builder,
+        get_gcs_object_store_builder, get_oss_object_store_builder, get_s3_object_store_builder,
     },
     print_options::{MaxRows, PrintOptions},
 };
@@ -137,16 +136,11 @@ pub async fn exec_from_repl(
                         Command::OutputFormat(subcommand) => {
                             if let Some(subcommand) = subcommand {
                                 if let Ok(command) = subcommand.parse::<OutputFormat>() {
-                                    if let Err(e) =
-                                        command.execute(&mut print_options).await
-                                    {
+                                    if let Err(e) = command.execute(&mut print_options).await {
                                         eprintln!("{e}")
                                     }
                                 } else {
-                                    eprintln!(
-                                        "'\\{}' is not a valid command",
-                                        &line[1..]
-                                    );
+                                    eprintln!("'\\{}' is not a valid command", &line[1..]);
                                 }
                             } else {
                                 println!("Output format is {:?}.", print_options.format);
@@ -169,9 +163,9 @@ pub async fn exec_from_repl(
                     Err(err) => eprintln!("{err}"),
                 }
                 // dialect might have changed
-                rl.helper_mut().unwrap().set_dialect(
-                    &ctx.task_ctx().session_config().options().sql_parser.dialect,
-                );
+                rl.helper_mut()
+                    .unwrap()
+                    .set_dialect(&ctx.task_ctx().session_config().options().sql_parser.dialect);
             }
             Err(ReadlineError::Interrupted) => {
                 println!("^C");
@@ -215,9 +209,7 @@ async fn exec_and_print(
         // For plans like `Explain` ignore `MaxRows` option and always display all rows
         let should_ignore_maxrows = matches!(
             plan,
-            LogicalPlan::Explain(_)
-                | LogicalPlan::DescribeTable(_)
-                | LogicalPlan::Analyze(_)
+            LogicalPlan::Explain(_) | LogicalPlan::DescribeTable(_) | LogicalPlan::Analyze(_)
         );
 
         let df = match &plan {
@@ -244,10 +236,7 @@ async fn exec_and_print(
     Ok(())
 }
 
-async fn create_external_table(
-    ctx: &SessionContext,
-    cmd: &CreateExternalTable,
-) -> Result<()> {
+async fn create_external_table(ctx: &SessionContext, cmd: &CreateExternalTable) -> Result<()> {
     let table_path = ListingTableUrl::parse(&cmd.location)?;
     let scheme = table_path.scheme();
     let url: &Url = table_path.as_ref();
@@ -354,8 +343,10 @@ mod tests {
         let location = "gcs://bucket/path/file.parquet";
 
         // for service_account_path
-        let sql = format!("CREATE EXTERNAL TABLE test STORED AS PARQUET
-            OPTIONS('service_account_path' '{service_account_path}') LOCATION '{location}'");
+        let sql = format!(
+            "CREATE EXTERNAL TABLE test STORED AS PARQUET
+            OPTIONS('service_account_path' '{service_account_path}') LOCATION '{location}'"
+        );
         let err = create_external_table_test(location, &sql)
             .await
             .unwrap_err();
@@ -384,8 +375,7 @@ mod tests {
         let location = "path/to/file.parquet";
 
         // Ensure that local files are also registered
-        let sql =
-            format!("CREATE EXTERNAL TABLE test STORED AS PARQUET LOCATION '{location}'");
+        let sql = format!("CREATE EXTERNAL TABLE test STORED AS PARQUET LOCATION '{location}'");
         let err = create_external_table_test(location, &sql)
             .await
             .unwrap_err();

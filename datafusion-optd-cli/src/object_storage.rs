@@ -22,9 +22,7 @@ use datafusion::{
     logical_expr::CreateExternalTable,
 };
 use object_store::aws::AwsCredential;
-use object_store::{
-    aws::AmazonS3Builder, gcp::GoogleCloudStorageBuilder, CredentialProvider,
-};
+use object_store::{aws::AmazonS3Builder, gcp::GoogleCloudStorageBuilder, CredentialProvider};
 use std::sync::Arc;
 use url::Url;
 
@@ -139,9 +137,7 @@ pub fn get_gcs_object_store_builder(
         builder = builder.with_service_account_key(service_account_key);
     }
 
-    if let Some(application_credentials_path) =
-        cmd.options.get("application_credentials_path")
-    {
+    if let Some(application_credentials_path) = cmd.options.get("application_credentials_path") {
         builder = builder.with_application_credentials(application_credentials_path);
     }
 

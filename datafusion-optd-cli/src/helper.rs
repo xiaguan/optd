@@ -77,9 +77,9 @@ impl CliHelper {
             };
 
             match DFParser::parse_sql_with_dialect(&sql, dialect.as_ref()) {
-                Ok(statements) if statements.is_empty() => Ok(ValidationResult::Invalid(
-                    Some("  🤔 You entered an empty statement".to_string()),
-                )),
+                Ok(statements) if statements.is_empty() => Ok(ValidationResult::Invalid(Some(
+                    "  🤔 You entered an empty statement".to_string(),
+                ))),
                 Ok(_statements) => Ok(ValidationResult::Valid(None)),
                 Err(err) => Ok(ValidationResult::Invalid(Some(format!(
                     "  🤔 Invalid statement: {err}",
@@ -203,50 +203,74 @@ mod tests {
 
         // shoule be valid
         let result = readline_direct(
-            Cursor::new(r"create external table test stored as csv location 'data.csv' delimiter ',';".as_bytes()),
+            Cursor::new(
+                r"create external table test stored as csv location 'data.csv' delimiter ',';"
+                    .as_bytes(),
+            ),
             &validator,
         )?;
         assert!(matches!(result, ValidationResult::Valid(None)));
 
         let result = readline_direct(
-            Cursor::new(r"create external table test stored as csv location 'data.csv' delimiter '\0';".as_bytes()),
+            Cursor::new(
+                r"create external table test stored as csv location 'data.csv' delimiter '\0';"
+                    .as_bytes(),
+            ),
             &validator,
         )?;
         assert!(matches!(result, ValidationResult::Valid(None)));
 
         let result = readline_direct(
-            Cursor::new(r"create external table test stored as csv location 'data.csv' delimiter '\n';".as_bytes()),
+            Cursor::new(
+                r"create external table test stored as csv location 'data.csv' delimiter '\n';"
+                    .as_bytes(),
+            ),
             &validator,
         )?;
         assert!(matches!(result, ValidationResult::Valid(None)));
 
         let result = readline_direct(
-            Cursor::new(r"create external table test stored as csv location 'data.csv' delimiter '\r';".as_bytes()),
+            Cursor::new(
+                r"create external table test stored as csv location 'data.csv' delimiter '\r';"
+                    .as_bytes(),
+            ),
             &validator,
         )?;
         assert!(matches!(result, ValidationResult::Valid(None)));
 
         let result = readline_direct(
-            Cursor::new(r"create external table test stored as csv location 'data.csv' delimiter '\t';".as_bytes()),
+            Cursor::new(
+                r"create external table test stored as csv location 'data.csv' delimiter '\t';"
+                    .as_bytes(),
+            ),
             &validator,
         )?;
         assert!(matches!(result, ValidationResult::Valid(None)));
 
         let result = readline_direct(
-            Cursor::new(r"create external table test stored as csv location 'data.csv' delimiter '\\';".as_bytes()),
+            Cursor::new(
+                r"create external table test stored as csv location 'data.csv' delimiter '\\';"
+                    .as_bytes(),
+            ),
             &validator,
         )?;
         assert!(matches!(result, ValidationResult::Valid(None)));
 
         // should be invalid
         let result = readline_direct(
-            Cursor::new(r"create external table test stored as csv location 'data.csv' delimiter ',,';".as_bytes()),
+            Cursor::new(
+                r"create external table test stored as csv location 'data.csv' delimiter ',,';"
+                    .as_bytes(),
+            ),
             &validator,
         )?;
         assert!(matches!(result, ValidationResult::Invalid(Some(_))));
 
         let result = readline_direct(
-            Cursor::new(r"create external table test stored as csv location 'data.csv' delimiter '\u{07}';".as_bytes()),
+            Cursor::new(
+                r"create external table test stored as csv location 'data.csv' delimiter '\u{07}';"
+                    .as_bytes(),
+            ),
             &validator,
         )?;
         assert!(matches!(result, ValidationResult::Invalid(Some(_))));
@@ -259,16 +283,14 @@ mod tests {
         let mut validator = CliHelper::default();
 
         // shoule be invalid in generic dialect
-        let result =
-            readline_direct(Cursor::new(r"select 1 # 2;".as_bytes()), &validator)?;
+        let result = readline_direct(Cursor::new(r"select 1 # 2;".as_bytes()), &validator)?;
         assert!(
             matches!(result, ValidationResult::Invalid(Some(e)) if e.contains("Invalid statement"))
         );
 
         // valid in postgresql dialect
         validator.set_dialect("postgresql");
-        let result =
-            readline_direct(Cursor::new(r"select 1 # 2;".as_bytes()), &validator)?;
+        let result = readline_direct(Cursor::new(r"select 1 # 2;".as_bytes()), &validator)?;
         assert!(matches!(result, ValidationResult::Valid(None)));
 
         Ok(())

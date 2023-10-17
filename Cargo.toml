@@ -1,7 +1,10 @@
 [workspace]
 members = [
     "datafusion-optd-cli",
+    "datafusion-optd-optimizer",
     "optd-core"
 ]
-
 resolver = "2"
+
+[patch.crates-io]
+datafusion-optimizer = { path = "datafusion-optd-optimizer" }

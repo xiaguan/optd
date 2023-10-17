@@ -46,10 +46,7 @@ fn init() {
     "[{\"name\":\"datafusion.execution.batch_size\",\"value\":\"1\"}]\n"
 )]
 #[test]
-fn cli_quick_test<'a>(
-    #[case] args: impl IntoIterator<Item = &'a str>,
-    #[case] expected: &str,
-) {
+fn cli_quick_test<'a>(#[case] args: impl IntoIterator<Item = &'a str>, #[case] expected: &str) {
     let mut cmd = Command::cargo_bin("datafusion-cli").unwrap();
     cmd.args(args);
     cmd.assert().stdout(predicate::eq(expected));

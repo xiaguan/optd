@@ -21,8 +21,8 @@ use datafusion::execution::context::SessionConfig;
 use datafusion::execution::memory_pool::{FairSpillPool, GreedyMemoryPool};
 use datafusion::execution::runtime_env::{RuntimeConfig, RuntimeEnv};
 use datafusion::prelude::SessionContext;
-use datafusion_cli::catalog::DynamicFileCatalog;
-use datafusion_cli::{
+use datafusion_optd_cli::catalog::DynamicFileCatalog;
+use datafusion_optd_cli::{
     exec,
     print_format::PrintFormat,
     print_options::{MaxRows, PrintOptions},
@@ -177,8 +177,7 @@ pub async fn main() -> Result<()> {
 
     let runtime_env = create_runtime_env(rn_config.clone())?;
 
-    let mut ctx =
-        SessionContext::new_with_config_rt(session_config.clone(), Arc::new(runtime_env));
+    let mut ctx = SessionContext::new_with_config_rt(session_config.clone(), Arc::new(runtime_env));
     ctx.refresh_catalogs().await?;
     // install dynamic catalog provider that knows how to open files
     ctx.register_catalog_list(Arc::new(DynamicFileCatalog::new(
@@ -311,9 +310,9 @@ fn extract_memory_pool_size(size: &str) -> Result<usize, String> {
     let lower = size.to_lowercase();
     if let Some(caps) = suffix_re().captures(&lower) {
         let num_str = caps.get(1).unwrap().as_str();
-        let num = num_str.parse::<usize>().map_err(|_| {
-            format!("Invalid numeric value in memory pool size '{}'", size)
-        })?;
+        let num = num_str
+            .parse::<usize>()
+            .map_err(|_| format!("Invalid numeric value in memory pool size '{}'", size))?;
 
         let suffix = caps.get(2).map(|m| m.as_str()).unwrap_or("b");
         let unit = byte_suffixes()

@@ -66,8 +66,7 @@ fn print_batches_with_sep(batches: &[RecordBatch], delimiter: u8) -> Result<Stri
             writer.write(batch)?;
         }
     }
-    let formatted =
-        String::from_utf8(bytes).map_err(|e| DataFusionError::External(Box::new(e)))?;
+    let formatted = String::from_utf8(bytes).map_err(|e| DataFusionError::External(Box::new(e)))?;
     Ok(formatted)
 }
 
@@ -88,10 +87,7 @@ fn keep_only_maxrows(s: &str, maxrows: usize) -> String {
     result.join("\n")
 }
 
-fn format_batches_with_maxrows(
-    batches: &[RecordBatch],
-    maxrows: MaxRows,
-) -> Result<String> {
+fn format_batches_with_maxrows(batches: &[RecordBatch], maxrows: MaxRows) -> Result<String> {
     match maxrows {
         MaxRows::Limited(maxrows) => {
             // Only format enough batches for maxrows
@@ -221,10 +217,16 @@ mod tests {
 
         let batches = vec![batch];
         let r = batches_to_json!(ArrayWriter, &batches);
-        assert_eq!("[{\"a\":1,\"b\":4,\"c\":7},{\"a\":2,\"b\":5,\"c\":8},{\"a\":3,\"b\":6,\"c\":9}]", r);
+        assert_eq!(
+            "[{\"a\":1,\"b\":4,\"c\":7},{\"a\":2,\"b\":5,\"c\":8},{\"a\":3,\"b\":6,\"c\":9}]",
+            r
+        );
 
         let r = batches_to_json!(LineDelimitedWriter, &batches);
-        assert_eq!("{\"a\":1,\"b\":4,\"c\":7}\n{\"a\":2,\"b\":5,\"c\":8}\n{\"a\":3,\"b\":6,\"c\":9}\n", r);
+        assert_eq!(
+            "{\"a\":1,\"b\":4,\"c\":7}\n{\"a\":2,\"b\":5,\"c\":8}\n{\"a\":3,\"b\":6,\"c\":9}\n",
+            r
+        );
         Ok(())
     }
 
@@ -233,8 +235,7 @@ mod tests {
         let schema = Arc::new(Schema::new(vec![Field::new("a", DataType::Int32, false)]));
 
         let batch =
-            RecordBatch::try_new(schema, vec![Arc::new(Int32Array::from(vec![1, 2, 3]))])
-                .unwrap();
+            RecordBatch::try_new(schema, vec![Arc::new(Int32Array::from(vec![1, 2, 3]))]).unwrap();
 
         #[rustfmt::skip]
         let all_rows_expected = [
