@@ -2,32 +2,42 @@
 
 use crate::rel_node::{RelNode, RelNodeRef, RelNodeTyp, Value};
 
+use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
+
 #[repr(usize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum OptRelNodeTyp {
     // Plan nodes
+    // Developers: update `is_plan_node` function after adding new elements
+    Projection,
+    Filter,
     Join,
     // Expressions
     Constant,
     ColumnRef,
-    // Enums
-    JoinType,
+    UnOp,
+    BinOp,
+    Func,
+}
+
+#[derive(FromPrimitive)]
+pub enum JoinType {
+    Inner = 1,
+    FullOuter,
+    LeftOuter,
+    RightOuter,
 }
 
 impl OptRelNodeTyp {
     pub fn is_plan_node(&self) -> bool {
-        (OptRelNodeTyp::Join as usize) <= (*self as usize)
+        (OptRelNodeTyp::Projection as usize) <= (*self as usize)
             && (*self as usize) <= (OptRelNodeTyp::Join as usize)
     }
 
     pub fn is_expression(&self) -> bool {
         (OptRelNodeTyp::Constant as usize) < (*self as usize)
-            && (*self as usize) < (OptRelNodeTyp::Constant as usize)
-    }
-
-    pub fn is_property(&self) -> bool {
-        (OptRelNodeTyp::JoinType as usize) < (*self as usize)
-            && (*self as usize) < (OptRelNodeTyp::JoinType as usize)
+            && (*self as usize) <= (OptRelNodeTyp::Func as usize)
     }
 }
 
@@ -80,21 +90,6 @@ impl OptRelNode for Expr {
 }
 
 #[derive(Clone, Debug)]
-pub struct Property(OptRelNodeRef);
-
-impl OptRelNode for Property {
-    fn into_rel_node(self) -> OptRelNodeRef {
-        self.0
-    }
-    fn from_rel_node(rel_node: OptRelNodeRef) -> Option<Self> {
-        if !rel_node.typ.is_property() {
-            return None;
-        }
-        Some(Self(rel_node))
-    }
-}
-
-#[derive(Clone, Debug)]
 pub struct LogicalJoin(PlanNode);
 
 impl OptRelNode for LogicalJoin {
@@ -117,10 +112,9 @@ impl LogicalJoin {
                 children: vec![
                     left.into_rel_node(),
                     right.into_rel_node(),
-                    join_type.into_rel_node(),
                     cond.into_rel_node(),
                 ],
-                data: None,
+                data: Some(Value::Int(join_type as i64)),
             }
             .into(),
         ))
@@ -134,12 +128,12 @@ impl LogicalJoin {
         PlanNode::from_rel_node(self.clone().into_rel_node().children[1].clone()).unwrap()
     }
 
-    pub fn join_type(&self) -> JoinType {
-        JoinType::from_rel_node(self.clone().into_rel_node().children[2].clone()).unwrap()
-    }
-
     pub fn cond(&self) -> Expr {
         Expr::from_rel_node(self.clone().into_rel_node().children[3].clone()).unwrap()
+    }
+
+    pub fn join_type(&self) -> JoinType {
+        JoinType::from_i64(self.0 .0.data.as_ref().unwrap().as_i64()).unwrap()
     }
 }
 
@@ -173,21 +167,6 @@ impl OptRelNode for ColumnRefExpr {
     }
 }
 
-#[derive(Clone, Debug)]
-pub struct JoinType(Property);
-
-impl OptRelNode for JoinType {
-    fn into_rel_node(self) -> OptRelNodeRef {
-        self.0.into_rel_node()
-    }
-    fn from_rel_node(rel_node: OptRelNodeRef) -> Option<Self> {
-        if rel_node.typ != OptRelNodeTyp::JoinType {
-            return None;
-        }
-        Property::from_rel_node(rel_node).map(Self)
-    }
-}
-
 pub fn constant(value: Value) -> ConstantExpr {
     ConstantExpr(Expr(
         RelNode {
@@ -215,6 +194,6 @@ pub fn explain(rel_node: OptRelNodeRef) {
         OptRelNodeTyp::ColumnRef => ColumnRefExpr::from_rel_node(rel_node).unwrap().explain(),
         OptRelNodeTyp::Constant => ConstantExpr::from_rel_node(rel_node).unwrap().explain(),
         OptRelNodeTyp::Join => LogicalJoin::from_rel_node(rel_node).unwrap().explain(),
-        OptRelNodeTyp::JoinType => JoinType::from_rel_node(rel_node).unwrap().explain(),
+        _ => unimplemented!(),
     }
 }

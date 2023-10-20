@@ -20,6 +20,15 @@ pub enum Value {
     Any(Arc<dyn std::any::Any>),
 }
 
+impl Value {
+    pub fn as_i64(&self) -> i64 {
+        match self {
+            Value::Int(i) => *i,
+            _ => panic!("Value is not an i64"),
+        }
+    }
+}
+
 /// A RelNode is consisted of a plan node type and some children.
 #[derive(Clone, Debug)]
 pub struct RelNode<T: RelNodeTyp> {
