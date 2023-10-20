@@ -1,4 +1,5 @@
 use anyhow::Result;
+use tracing::debug;
 
 use crate::cascades::optimizer::{CascadesOptimizer, GroupExprId};
 
@@ -16,6 +17,7 @@ impl OptimizeExpressionTask {
 
 impl Task for OptimizeExpressionTask {
     fn execute(&self, optimizer: &mut CascadesOptimizer) -> Result<Vec<Box<dyn Task>>> {
+        debug!(name: "task_begin", task = "optimize_expr", expr_id = %self.expr_id);
         Ok(vec![])
     }
 }
