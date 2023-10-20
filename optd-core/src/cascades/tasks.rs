@@ -5,7 +5,4 @@ mod optimize_expression;
 mod optimize_group;
 mod optimize_inputs;
 
-
-trait Task {
-    
-}
+trait Task {}

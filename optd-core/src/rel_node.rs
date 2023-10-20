@@ -1,3 +1,6 @@
+//! The RelNode is the basic data structure of the optimizer. It is dynamically typed and is
+//! the internal representation of the plan nodes.
+
 use std::{
     fmt::{Debug, Display},
     hash::Hash,
@@ -14,6 +17,7 @@ pub enum Value {
     Float(f64),
     String(String),
     Bool(bool),
+    Any(Arc<dyn std::any::Any>),
 }
 
 /// A RelNode is consisted of a plan node type and some children.
@@ -21,5 +25,5 @@ pub enum Value {
 pub struct RelNode<T: RelNodeTyp> {
     pub typ: T,
     pub children: Vec<RelNodeRef<T>>,
-    pub data: Option<Box<Value>>,
+    pub data: Option<Value>,
 }
