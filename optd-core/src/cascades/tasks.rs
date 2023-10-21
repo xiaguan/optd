@@ -5,14 +5,12 @@ use crate::rel_node::RelNodeTyp;
 use super::CascadesOptimizer;
 
 mod apply_rule;
-mod explore_expression;
 mod explore_group;
 mod optimize_expression;
 mod optimize_group;
 mod optimize_inputs;
 
 pub use apply_rule::ApplyRuleTask;
-pub use explore_expression::ExploreExpressionTask;
 pub use explore_group::ExploreGroupTask;
 pub use optimize_expression::OptimizeExpressionTask;
 pub use optimize_group::OptimizeGroupTask;

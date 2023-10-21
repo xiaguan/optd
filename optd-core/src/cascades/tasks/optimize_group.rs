@@ -25,9 +25,11 @@ impl<T: RelNodeTyp> Task<T> for OptimizeGroupTask {
         trace!(name: "task_begin", task = "optimize_group", group_id = %self.group_id);
         let exprs = optimizer.get_group_exprs(self.group_id);
         let mut tasks = vec![];
+        let exprs_cnt = exprs.len();
         for expr in exprs {
-            tasks.push(Box::new(OptimizeExpressionTask::new(expr)) as Box<dyn Task<T>>);
+            tasks.push(Box::new(OptimizeExpressionTask::new(expr, false)) as Box<dyn Task<T>>);
         }
+        trace!(name: "task_finish", task = "optimize_group", group_id = %self.group_id, exprs_cnt = exprs_cnt);
         Ok(tasks)
     }
 }

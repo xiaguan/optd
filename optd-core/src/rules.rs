@@ -1,7 +1,11 @@
-use anyhow::Result;
+mod join_commute;
 
-use crate::rel_node::{RelNodeRef, RelNodeTyp};
+use crate::rel_node::{RelNodeRef, RelNodeTyp, Value};
+
+pub use join_commute::JoinCommuteRule;
 
 pub trait Rule<T: RelNodeTyp> {
-    fn apply(&self, input: RelNodeRef<T>) -> Result<Vec<RelNodeRef<T>>>;
+    fn matches(&self, typ: T, data: Option<Value>) -> bool;
+    fn apply(&self, input: RelNodeRef<T>) -> Vec<RelNodeRef<T>>;
+    fn name(&self) -> &'static str;
 }
