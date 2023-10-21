@@ -14,7 +14,7 @@ pub enum JoinType {
 }
 
 #[derive(Clone, Debug)]
-pub struct LogicalJoin(PlanNode);
+pub struct LogicalJoin(pub PlanNode);
 
 impl OptRelNode for LogicalJoin {
     fn into_rel_node(self) -> OptRelNodeRef {
@@ -53,7 +53,7 @@ impl LogicalJoin {
     }
 
     pub fn cond(&self) -> Expr {
-        Expr::from_rel_node(self.clone().into_rel_node().children[3].clone()).unwrap()
+        Expr::from_rel_node(self.clone().into_rel_node().children[2].clone()).unwrap()
     }
 
     pub fn join_type(&self) -> JoinType {

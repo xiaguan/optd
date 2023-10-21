@@ -5,5 +5,5 @@ mod optimizer;
 mod tasks;
 
 use memo::Memo;
-use optimizer::CascadesOptimizer;
+pub use optimizer::CascadesOptimizer;
 use tasks::Task;

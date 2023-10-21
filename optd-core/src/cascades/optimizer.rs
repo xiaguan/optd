@@ -47,7 +47,7 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
     }
 
     pub fn optimize(&mut self, root_rel: RelNodeRef<T>) -> Result<()> {
-        let group_id = self.memo.get_or_add_group_expr(root_rel);
+        let (group_id, _) = self.memo.get_or_add_group_expr(root_rel, None);
         self.tasks
             .push_back(Box::new(OptimizeGroupTask::new(group_id)));
         // get the task from the stack
@@ -59,11 +59,19 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
     }
 
     pub(super) fn get_group_exprs(&self, group_id: GroupId) -> Vec<GroupExprId> {
-        vec![]
+        self.memo.get_group_exprs(group_id)
     }
 
-    pub(super) fn add_group_expr(&mut self, expr: RelNodeRef<T>) -> GroupExprId {
-        self.memo.get_or_add_group_expr(expr)
+    pub(super) fn add_group_expr(
+        &mut self,
+        expr: RelNodeRef<T>,
+        group_id: Option<GroupId>,
+    ) -> (GroupId, GroupExprId) {
+        self.memo.get_or_add_group_expr(expr, group_id)
+    }
+
+    pub(super) fn get_group_id(&self, expr_id: GroupExprId) -> GroupId {
+        self.memo.get_group_id(expr_id)
     }
 
     pub(super) fn get_group_expr_memo(&self, expr_id: GroupExprId) -> RelMemoNodeRef<T> {

@@ -1,6 +1,9 @@
 mod union_find;
 
-use std::{collections::HashMap, sync::Arc};
+use std::{
+    collections::{HashMap, HashSet},
+    sync::Arc,
+};
 
 use tracing::trace;
 
@@ -32,15 +35,17 @@ impl<T: RelNodeTyp> std::fmt::Display for RelMemoNode<T> {
     }
 }
 
-struct Group<T: RelNodeTyp> {
-    group_exprs: HashMap<GroupExprId, RelMemoNodeRef<T>>,
+#[derive(Default)]
+struct Group {
+    group_exprs: HashSet<GroupExprId>,
 }
 
 pub struct Memo<T: RelNodeTyp> {
-    group_exprs: HashMap<GroupExprId, RelMemoNodeRef<T>>,
-    rev_group_exprs: HashMap<RelMemoNode<T>, GroupExprId>,
-    groups: HashMap<GroupId, Group<T>>,
+    group_exprs: HashMap<GroupExprId, (GroupId, RelMemoNodeRef<T>)>,
+    rev_group_exprs: HashMap<RelMemoNode<T>, (GroupId, GroupExprId)>,
+    groups: HashMap<GroupId, Group>,
     next_group_id: GroupId,
+    next_group_expr_id: GroupId,
 }
 
 impl<T: RelNodeTyp> Memo<T> {
@@ -50,6 +55,7 @@ impl<T: RelNodeTyp> Memo<T> {
             rev_group_exprs: HashMap::new(),
             groups: HashMap::new(),
             next_group_id: 0,
+            next_group_expr_id: 0,
         }
     }
 
@@ -59,53 +65,88 @@ impl<T: RelNodeTyp> Memo<T> {
         id
     }
 
-    fn find_existing_group_expr(&self, memo_node: &RelMemoNode<T>) -> Option<GroupExprId> {
+    fn next_group_expr_id(&mut self) -> GroupId {
+        let id = self.next_group_expr_id;
+        self.next_group_expr_id += 1;
+        id
+    }
+
+    fn find_existing_group_expr(
+        &self,
+        memo_node: &RelMemoNode<T>,
+    ) -> Option<(GroupId, GroupExprId)> {
         self.rev_group_exprs.get(memo_node).copied()
     }
 
     /// Add a group into the memo. SAFETY: should have checked memo_node using `find_existing_group_expr`.
-    fn add_new_group_expr(&mut self, memo_node: RelMemoNode<T>) -> GroupExprId {
-        let group_id = self.next_group_id();
-        trace!(name: "new_group", group_id = group_id, node = %memo_node);
-        self.group_exprs
-            .insert(group_id, Arc::new(memo_node.clone()));
-        self.rev_group_exprs.insert(memo_node, group_id);
-        group_id
+    fn add_new_group_expr(
+        &mut self,
+        memo_node: RelMemoNode<T>,
+        group_id: Option<GroupId>,
+    ) -> (GroupId, GroupExprId) {
+        let expr_id = self.next_group_expr_id();
+        trace!(name: "adding node to group", group_id = group_id, node = %memo_node);
+        if let Some(group_id) = group_id {
+            self.group_exprs
+                .insert(expr_id, (group_id, Arc::new(memo_node.clone())));
+            self.groups
+                .entry(group_id)
+                .or_insert_with(Group::default)
+                .group_exprs
+                .insert(expr_id);
+            self.rev_group_exprs.insert(memo_node, (group_id, expr_id));
+            (group_id, expr_id)
+        } else {
+            let group_id = self.next_group_id();
+            self.group_exprs
+                .insert(expr_id, (group_id, Arc::new(memo_node.clone())));
+            self.groups
+                .entry(group_id)
+                .or_insert_with(Group::default)
+                .group_exprs
+                .insert(expr_id);
+            self.rev_group_exprs.insert(memo_node, (group_id, expr_id));
+            (group_id, expr_id)
+        }
     }
 
     /// Add a group into the memo. If the group already exists, return the existing group id.
-    pub fn get_or_add_group_expr(&mut self, root_rel: RelNodeRef<T>) -> GroupExprId {
+    pub fn get_or_add_group_expr(
+        &mut self,
+        root_rel: RelNodeRef<T>,
+        new_group_id: Option<GroupId>,
+    ) -> (GroupId, GroupExprId) {
         let children_group_ids = root_rel
             .children
             .iter()
-            .map(|child| self.get_or_add_group_expr(child.clone()))
-            .collect();
-        let group_id = self.next_group_id();
+            .map(|child| self.get_or_add_group_expr(child.clone(), None).0)
+            .collect::<Vec<_>>();
         let memo_node = RelMemoNode {
             typ: root_rel.typ,
             children: children_group_ids,
             data: root_rel.data.clone(),
         };
-        if let Some(group_id) = self.find_existing_group_expr(&memo_node) {
-            return group_id;
+        if let Some((group_id, expr_id)) = self.find_existing_group_expr(&memo_node) {
+            if let Some(new_group_id) = new_group_id {
+                if new_group_id != group_id {
+                    panic!("not supported yet :(");
+                }
+            }
+            return (group_id, expr_id);
         }
-        self.add_new_group_expr(memo_node)
+        self.add_new_group_expr(memo_node, new_group_id)
     }
 
-    /// Add a group into the memo. If the group already exists, return the existing group id.
-    pub fn get_or_add_group_expr_memo(&mut self, memo_node: RelMemoNode<T>) -> GroupExprId {
-        if let Some(group_id) = self.find_existing_group_expr(&memo_node) {
-            return group_id;
-        }
-        self.add_new_group_expr(memo_node)
+    pub fn get_group_id(&self, group_expr_id: GroupExprId) -> GroupId {
+        self.group_exprs[&group_expr_id].0
     }
 
     pub fn get_group_expr_memo(&self, group_expr_id: GroupExprId) -> RelMemoNodeRef<T> {
-        self.group_exprs[&group_expr_id].clone()
+        self.group_exprs[&group_expr_id].1.clone()
     }
 
     pub fn get_group_expr(&self, group_expr_id: GroupExprId) -> Vec<RelNodeRef<T>> {
-        let expr = self.group_exprs[&group_expr_id].clone();
+        let (_, expr) = self.group_exprs[&group_expr_id].clone();
         let mut children = vec![];
         let mut cumulative = 1;
         for child in &expr.children {
@@ -123,12 +164,21 @@ impl<T: RelNodeTyp> Memo<T> {
                 selected_nodes.push(child[idx].clone());
             }
             selected_nodes.reverse();
-            result.push(Arc::new(RelNode {
+            let node = Arc::new(RelNode {
                 typ: expr.typ,
                 children: selected_nodes,
                 data: expr.data.clone(),
-            }))
+            });
+            result.push(node);
         }
         result
+    }
+
+    pub fn get_group_exprs(&self, group_id: GroupId) -> Vec<GroupExprId> {
+        if let Some(group) = self.groups.get(&group_id) {
+            group.group_exprs.iter().copied().collect()
+        } else {
+            return vec![];
+        }
     }
 }

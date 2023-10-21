@@ -24,13 +24,14 @@ impl OptimizeExpressionTask {
 
 impl<T: RelNodeTyp> Task<T> for OptimizeExpressionTask {
     fn execute(&self, optimizer: &mut CascadesOptimizer<T>) -> Result<Vec<Box<dyn Task<T>>>> {
-        trace!(name: "task_begin", task = "optimize_expr", expr_id = %self.expr_id);
         let expr = optimizer.get_group_expr_memo(self.expr_id);
+        trace!(name: "task_begin", task = "optimize_expr", expr_id = %self.expr_id, expr = %expr);
         let mut tasks = vec![];
         for (rule_id, rule) in optimizer.rules().iter().enumerate() {
             if optimizer.is_rule_fired(self.expr_id, rule_id) {
                 continue;
             }
+            optimizer.mark_rule_fired(self.expr_id, rule_id);
             if rule.matches(expr.typ, expr.data.clone()) {
                 tasks.push(Box::new(ApplyRuleTask::new(rule_id, self.expr_id)) as Box<dyn Task<T>>);
             }
