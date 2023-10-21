@@ -7,17 +7,31 @@ use std::{
     sync::Arc,
 };
 
+use ordered_float::OrderedFloat;
+
 pub type RelNodeRef<T> = Arc<RelNode<T>>;
 
 pub trait RelNodeTyp: PartialEq + Eq + Hash + Clone + Copy + 'static + Display + Debug {}
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Value {
     Int(i64),
-    Float(f64),
-    String(String),
+    Float(OrderedFloat<f64>),
+    String(Arc<str>),
     Bool(bool),
-    Any(Arc<dyn std::any::Any>),
+    Serialized(Arc<[u8]>),
+}
+
+impl std::fmt::Display for Value {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Int(x) => write!(f, "{x}"),
+            Self::Float(x) => write!(f, "{x}"),
+            Self::String(x) => write!(f, "\"{x}\""),
+            Self::Bool(x) => write!(f, "{x}"),
+            Self::Serialized(x) => write!(f, "<len:{}>", x.len()),
+        }
+    }
 }
 
 impl Value {
@@ -35,4 +49,18 @@ pub struct RelNode<T: RelNodeTyp> {
     pub typ: T,
     pub children: Vec<RelNodeRef<T>>,
     pub data: Option<Value>,
+}
+
+impl<T: RelNodeTyp> std::fmt::Display for RelNode<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({}", self.typ)?;
+        match self.data {
+            Some(ref data) => write!(f, " {}", data)?,
+            None => {}
+        }
+        for child in &self.children {
+            write!(f, " {}", child)?;
+        }
+        write!(f, ")")
+    }
 }

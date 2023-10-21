@@ -1,7 +1,10 @@
 use anyhow::Result;
-use tracing::debug;
+use tracing::trace;
 
-use crate::cascades::optimizer::{CascadesOptimizer, GroupExprId};
+use crate::{
+    cascades::optimizer::{CascadesOptimizer, GroupExprId},
+    rel_node::RelNodeTyp,
+};
 
 use super::Task;
 
@@ -15,9 +18,9 @@ impl OptimizeExpressionTask {
     }
 }
 
-impl Task for OptimizeExpressionTask {
-    fn execute(&self, optimizer: &mut CascadesOptimizer) -> Result<Vec<Box<dyn Task>>> {
-        debug!(name: "task_begin", task = "optimize_expr", expr_id = %self.expr_id);
+impl<T: RelNodeTyp> Task<T> for OptimizeExpressionTask {
+    fn execute(&self, optimizer: &mut CascadesOptimizer<T>) -> Result<Vec<Box<dyn Task<T>>>> {
+        trace!(name: "task_begin", task = "optimize_expr", expr_id = %self.expr_id);
         Ok(vec![])
     }
 }
