@@ -8,7 +8,7 @@ use crate::rel_node::{RelNode, RelNodeRef, RelNodeTyp, Value};
 
 pub use filter::LogicalFilter;
 pub use join::{JoinType, LogicalJoin};
-use pretty_xmlish::Pretty;
+use pretty_xmlish::{Pretty, PrettyConfig};
 pub use scan::LogicalScan;
 
 #[repr(usize)]
@@ -58,6 +58,14 @@ pub trait OptRelNode: 'static + Clone {
     fn dispatch_explain(&self) -> Pretty<'static>;
     fn explain(&self) -> Pretty<'static> {
         explain(self.clone().into_rel_node())
+    }
+    fn explain_to_string(&self) -> String {
+        let mut config = PrettyConfig::default();
+        config.need_boundaries = false;
+        config.reduced_spaces = true;
+        let mut out = String::new();
+        config.unicode(&mut out, &self.explain());
+        out
     }
 }
 
