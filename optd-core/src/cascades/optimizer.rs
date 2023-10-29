@@ -46,7 +46,7 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
         self.rules.clone()
     }
 
-    pub fn optimize(&mut self, root_rel: RelNodeRef<T>) -> Result<()> {
+    pub fn optimize(&mut self, root_rel: RelNodeRef<T>) -> Result<Vec<RelNodeRef<T>>> {
         let (group_id, _) = self.memo.get_or_add_group_expr(root_rel, None);
         self.tasks
             .push_back(Box::new(OptimizeGroupTask::new(group_id)));
@@ -55,7 +55,11 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
             let new_tasks = task.execute(self)?;
             self.tasks.extend(new_tasks);
         }
-        Ok(())
+        let mut result = vec![];
+        for expr in self.get_group_exprs(group_id) {
+            result.extend(self.get_group_expr(expr));
+        }
+        Ok(result)
     }
 
     pub(super) fn get_group_exprs(&self, group_id: GroupId) -> Vec<GroupExprId> {

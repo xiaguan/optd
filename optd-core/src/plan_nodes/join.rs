@@ -1,16 +1,26 @@
+use core::fmt;
+use std::fmt::Display;
+
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
+use pretty_xmlish::Pretty;
 
 use crate::rel_node::{RelNode, Value};
 
 use super::{Expr, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
 
-#[derive(FromPrimitive)]
+#[derive(FromPrimitive, Debug)]
 pub enum JoinType {
     Inner = 1,
     FullOuter,
     LeftOuter,
     RightOuter,
+}
+
+impl Display for JoinType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -20,11 +30,23 @@ impl OptRelNode for LogicalJoin {
     fn into_rel_node(self) -> OptRelNodeRef {
         self.0.into_rel_node()
     }
+
     fn from_rel_node(rel_node: OptRelNodeRef) -> Option<Self> {
         if rel_node.typ != OptRelNodeTyp::Join {
             return None;
         }
         PlanNode::from_rel_node(rel_node).map(Self)
+    }
+
+    fn dispatch_explain(&self) -> Pretty<'static> {
+        Pretty::simple_record(
+            "LogicalJoin",
+            vec![
+                ("typ", self.join_type().to_string().into()),
+                ("cond", self.cond().explain()),
+            ],
+            vec![self.left_child().explain(), self.right_child().explain()],
+        )
     }
 }
 
@@ -39,6 +61,7 @@ impl LogicalJoin {
                     cond.into_rel_node(),
                 ],
                 data: Some(Value::Int(join_type as i64)),
+                is_logical: true,
             }
             .into(),
         ))

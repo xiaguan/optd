@@ -85,7 +85,7 @@ impl<T: RelNodeTyp> Memo<T> {
         group_id: Option<GroupId>,
     ) -> (GroupId, GroupExprId) {
         let expr_id = self.next_group_expr_id();
-        trace!(name: "adding node to group", group_id = group_id, node = %memo_node);
+        trace!(event = "adding node to group", group_id = group_id, node = %memo_node);
         if let Some(group_id) = group_id {
             self.group_exprs
                 .insert(expr_id, (group_id, Arc::new(memo_node.clone())));
@@ -168,6 +168,7 @@ impl<T: RelNodeTyp> Memo<T> {
                 typ: expr.typ,
                 children: selected_nodes,
                 data: expr.data.clone(),
+                is_logical: true,
             });
             result.push(node);
         }

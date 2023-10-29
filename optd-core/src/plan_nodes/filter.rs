@@ -1,3 +1,5 @@
+use pretty_xmlish::Pretty;
+
 use crate::rel_node::RelNode;
 
 use super::{Expr, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
@@ -16,6 +18,14 @@ impl OptRelNode for LogicalFilter {
         }
         PlanNode::from_rel_node(rel_node).map(Self)
     }
+
+    fn dispatch_explain(&self) -> Pretty<'static> {
+        Pretty::simple_record(
+            "LogicalFilter",
+            vec![("cond", self.cond().explain())],
+            vec![self.child().explain()],
+        )
+    }
 }
 
 impl LogicalFilter {
@@ -26,6 +36,7 @@ impl LogicalFilter {
                 typ: OptRelNodeTyp::Filter,
                 children: vec![child.into_rel_node(), cond.into_rel_node()],
                 data: None,
+                is_logical: true,
             }
             .into(),
         ))

@@ -41,6 +41,13 @@ impl Value {
             _ => panic!("Value is not an i64"),
         }
     }
+
+    pub fn as_str(&self) -> Arc<str> {
+        match self {
+            Value::String(i) => i.clone(),
+            _ => panic!("Value is not a string"),
+        }
+    }
 }
 
 /// A RelNode is consisted of a plan node type and some children.
@@ -49,6 +56,7 @@ pub struct RelNode<T: RelNodeTyp> {
     pub typ: T,
     pub children: Vec<RelNodeRef<T>>,
     pub data: Option<Value>,
+    pub is_logical: bool,
 }
 
 impl<T: RelNodeTyp> std::fmt::Display for RelNode<T> {
