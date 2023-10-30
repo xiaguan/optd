@@ -18,9 +18,9 @@ pub fn main() {
         .init();
 
     let mut optimizer = CascadesOptimizer::new_with_rules(vec![
-        // Arc::new(JoinCommuteRule {}),
-        // Arc::new(JoinAssocRule {}),
-        // Arc::new(FilterJoinRule {}),
+        Arc::new(JoinCommuteRule {}),
+        Arc::new(JoinAssocRule {}),
+        Arc::new(FilterJoinRule {}),
         Arc::new(PhysicalConversionRule {}),
     ]);
 

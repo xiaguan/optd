@@ -35,9 +35,10 @@ impl<T: RelNodeTyp> Task<T> for OptimizeExpressionTask {
                 continue;
             }
             if rule.matches(expr.typ, expr.data.clone()) {
-                tasks
-                    .push(Box::new(ApplyRuleTask::new(rule_id, self.expr_id, true))
-                        as Box<dyn Task<T>>);
+                tasks.push(
+                    Box::new(ApplyRuleTask::new(rule_id, self.expr_id, self.exploring))
+                        as Box<dyn Task<T>>,
+                );
                 for &input_group_id in &expr.children {
                     tasks.push(Box::new(ExploreGroupTask::new(input_group_id)) as Box<dyn Task<T>>);
                 }

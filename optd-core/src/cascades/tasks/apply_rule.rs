@@ -43,9 +43,10 @@ impl<T: RelNodeTyp> Task<T> for ApplyRuleTask {
                 let (_, expr_id) = optimizer.add_group_expr(expr, Some(group_id));
                 trace!(event = "apply_rule", expr_id = %self.expr_id, rule_id = %self.rule_id, new_expr_id = %expr_id);
                 if expr_typ.is_logical() {
-                    tasks
-                        .push(Box::new(OptimizeExpressionTask::new(expr_id, true))
-                            as Box<dyn Task<T>>);
+                    tasks.push(
+                        Box::new(OptimizeExpressionTask::new(expr_id, self.exploring))
+                            as Box<dyn Task<T>>,
+                    );
                 } else {
                     tasks.push(Box::new(OptimizeInputsTask::new(expr_id)) as Box<dyn Task<T>>);
                 }
