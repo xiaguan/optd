@@ -31,13 +31,17 @@ impl<T: RelNodeTyp> Task<T> for OptimizeExpressionTask {
             if optimizer.is_rule_fired(self.expr_id, rule_id) {
                 continue;
             }
-            optimizer.mark_rule_fired(self.expr_id, rule_id);
-            if rule.matches(expr.typ, expr.data.clone()) {
-                tasks.push(Box::new(ApplyRuleTask::new(rule_id, self.expr_id)) as Box<dyn Task<T>>);
+            if self.exploring && rule.is_impl_rule() {
+                continue;
             }
-        }
-        for &input_group_id in &expr.children {
-            tasks.push(Box::new(ExploreGroupTask::new(input_group_id)) as Box<dyn Task<T>>);
+            if rule.matches(expr.typ, expr.data.clone()) {
+                tasks
+                    .push(Box::new(ApplyRuleTask::new(rule_id, self.expr_id, true))
+                        as Box<dyn Task<T>>);
+                for &input_group_id in &expr.children {
+                    tasks.push(Box::new(ExploreGroupTask::new(input_group_id)) as Box<dyn Task<T>>);
+                }
+            }
         }
         trace!(event = "task_end", task = "optimize_expr", expr_id = %self.expr_id);
         Ok(tasks)

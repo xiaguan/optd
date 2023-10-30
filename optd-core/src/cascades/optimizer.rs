@@ -76,13 +76,13 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
             for expr_id in self.memo.get_all_exprs_in_group(group_id) {
                 let memo_node = self.memo.get_expr_memoed(expr_id);
                 println!("  expr_id={} | {}", expr_id, memo_node);
-                let bindings = self.memo.get_all_expr_bindings(expr_id);
+                let bindings = self.memo.get_all_expr_bindings(expr_id, false);
                 for binding in bindings {
                     println!("    {}", binding);
                 }
             }
         }
-        Ok(self.memo.get_all_group_bindings(group_id))
+        Ok(self.memo.get_all_group_bindings(group_id, true))
     }
 
     pub(super) fn get_all_exprs_in_group(&self, group_id: GroupId) -> Vec<ExprId> {
@@ -106,7 +106,11 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
     }
 
     pub(super) fn get_all_expr_bindings(&self, expr_id: ExprId) -> Vec<RelNodeRef<T>> {
-        self.memo.get_all_expr_bindings(expr_id)
+        self.memo.get_all_expr_bindings(expr_id, false)
+    }
+
+    pub(super) fn get_all_expr_physical_bindings(&self, expr_id: ExprId) -> Vec<RelNodeRef<T>> {
+        self.memo.get_all_expr_bindings(expr_id, true)
     }
 
     pub(super) fn is_group_explored(&self, group_id: GroupId) -> bool {

@@ -32,7 +32,10 @@ impl<T: RelNodeTyp> Task<T> for ExploreGroupTask {
         let exprs = optimizer.get_all_exprs_in_group(self.group_id);
         let exprs_cnt = exprs.len();
         for expr in exprs {
-            tasks.push(Box::new(OptimizeExpressionTask::new(expr, true)) as Box<dyn Task<T>>);
+            let typ = optimizer.get_expr_memoed(expr).typ;
+            if typ.is_logical() {
+                tasks.push(Box::new(OptimizeExpressionTask::new(expr, true)) as Box<dyn Task<T>>);
+            }
         }
         optimizer.mark_group_explored(self.group_id);
         trace!(

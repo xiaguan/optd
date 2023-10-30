@@ -36,6 +36,10 @@ impl Rule<OptRelNodeTyp> for PhysicalConversionRule {
         }
     }
 
+    fn is_impl_rule(&self) -> bool {
+        true
+    }
+
     fn name(&self) -> &'static str {
         "physical_conversion"
     }

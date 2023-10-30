@@ -179,24 +179,33 @@ impl<T: RelNodeTyp> Memo<T> {
 
     /// Get all bindings of a group. TODO: this is not efficient. Should decide whether to expand the
     /// rule based on the matcher.
-    pub fn get_all_group_bindings(&self, group_id: GroupId) -> Vec<RelNodeRef<T>> {
+    pub fn get_all_group_bindings(
+        &self,
+        group_id: GroupId,
+        physical_only: bool,
+    ) -> Vec<RelNodeRef<T>> {
         let group_id = self.get_reduced_group_id(group_id);
         let group = self.groups.get(&group_id).expect("group not found");
         group
             .group_exprs
             .iter()
-            .map(|&expr_id| self.get_all_expr_bindings(expr_id))
+            .filter(|x| !physical_only || !self.get_expr_memoed(**x).typ.is_logical())
+            .map(|&expr_id| self.get_all_expr_bindings(expr_id, physical_only))
             .concat()
     }
 
     /// Get all bindings of an expression. TODO: this is not efficient. Should decide whether to expand the
     /// rule based on the matcher.
-    pub fn get_all_expr_bindings(&self, expr_id: ExprId) -> Vec<RelNodeRef<T>> {
+    pub fn get_all_expr_bindings(
+        &self,
+        expr_id: ExprId,
+        physical_only: bool,
+    ) -> Vec<RelNodeRef<T>> {
         let expr = self.get_expr_memoed(expr_id);
         let mut children = vec![];
         let mut cumulative = 1;
         for child in &expr.children {
-            let group_exprs = self.get_all_group_bindings(*child);
+            let group_exprs = self.get_all_group_bindings(*child, physical_only);
             cumulative *= group_exprs.len();
             children.push(group_exprs);
         }
