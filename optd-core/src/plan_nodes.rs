@@ -1,18 +1,19 @@
 //! Typed interface of plan nodes.
 
+mod expr;
 mod filter;
 mod join;
 mod scan;
 
 use std::sync::Arc;
 
-use crate::rel_node::{RelNode, RelNodeRef, RelNodeTyp, Value};
+use crate::rel_node::{RelNode, RelNodeRef, RelNodeTyp};
 
-pub use self::{filter::PhysicalFilter, join::PhysicalNestedLoopJoin, scan::PhysicalScan};
-pub use filter::LogicalFilter;
-pub use join::{JoinType, LogicalJoin};
+pub use expr::{BinOpExpr, BinOpType, ColumnRefExpr, ConstantExpr, FuncExpr, UnOpExpr, UnOpType};
+pub use filter::{LogicalFilter, PhysicalFilter};
+pub use join::{JoinType, LogicalJoin, PhysicalNestedLoopJoin};
 use pretty_xmlish::{Pretty, PrettyConfig};
-pub use scan::LogicalScan;
+pub use scan::{LogicalScan, PhysicalScan};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum OptRelNodeTyp {
@@ -30,9 +31,9 @@ pub enum OptRelNodeTyp {
     // Expressions
     Constant,
     ColumnRef,
-    UnOp,
-    BinOp,
-    Func,
+    UnOp(UnOpType),
+    BinOp(BinOpType),
+    Func(usize),
 }
 
 impl OptRelNodeTyp {
@@ -53,7 +54,9 @@ impl OptRelNodeTyp {
     }
 
     pub fn is_expression(&self) -> bool {
-        if let Self::Constant | Self::ColumnRef | Self::UnOp | Self::BinOp | Self::Func = self {
+        if let Self::Constant | Self::ColumnRef | Self::UnOp(_) | Self::BinOp(_) | Self::Func(_) =
+            self
+        {
             true
         } else {
             false
@@ -160,76 +163,21 @@ impl OptRelNode for Expr {
     }
 }
 
-#[derive(Clone, Debug)]
-pub struct ConstantExpr(pub Expr);
-
-impl ConstantExpr {
-    pub fn new(value: Value) -> Self {
-        ConstantExpr(Expr(
-            RelNode {
-                typ: OptRelNodeTyp::Constant,
-                children: vec![],
-                data: Some(value),
-            }
-            .into(),
-        ))
-    }
-
-    pub fn value(&self) -> Value {
-        self.0 .0.data.clone().unwrap()
-    }
-}
-
-impl OptRelNode for ConstantExpr {
-    fn into_rel_node(self) -> OptRelNodeRef {
-        self.0.into_rel_node()
-    }
-    fn from_rel_node(rel_node: OptRelNodeRef) -> Option<Self> {
-        if rel_node.typ != OptRelNodeTyp::Constant {
-            return None;
-        }
-        Expr::from_rel_node(rel_node).map(Self)
-    }
-    fn dispatch_explain(&self) -> Pretty<'static> {
-        Pretty::display(&self.value())
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct ColumnRefExpr(Expr);
-
-impl OptRelNode for ColumnRefExpr {
-    fn into_rel_node(self) -> OptRelNodeRef {
-        self.0.into_rel_node()
-    }
-    fn from_rel_node(rel_node: OptRelNodeRef) -> Option<Self> {
-        if rel_node.typ != OptRelNodeTyp::ColumnRef {
-            return None;
-        }
-        Expr::from_rel_node(rel_node).map(Self)
-    }
-    fn dispatch_explain(&self) -> Pretty<'static> {
-        Pretty::display(&"ColumnRefExpr")
-    }
-}
-
-pub fn column_ref(column_idx: usize) -> ConstantExpr {
-    ConstantExpr(Expr(
-        RelNode {
-            typ: OptRelNodeTyp::ColumnRef,
-            children: vec![],
-            data: Some(Value::Int(column_idx as i64)),
-        }
-        .into(),
-    ))
-}
-
 pub fn explain(rel_node: OptRelNodeRef) -> Pretty<'static> {
     match rel_node.typ {
         OptRelNodeTyp::ColumnRef => ColumnRefExpr::from_rel_node(rel_node)
             .unwrap()
             .dispatch_explain(),
         OptRelNodeTyp::Constant => ConstantExpr::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::UnOp(_) => UnOpExpr::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::BinOp(_) => BinOpExpr::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::Func(_) => FuncExpr::from_rel_node(rel_node)
             .unwrap()
             .dispatch_explain(),
         OptRelNodeTyp::Join(_) => LogicalJoin::from_rel_node(rel_node)
