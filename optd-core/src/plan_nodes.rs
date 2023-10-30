@@ -4,14 +4,15 @@ mod filter;
 mod join;
 mod scan;
 
+use std::sync::Arc;
+
 use crate::rel_node::{RelNode, RelNodeRef, RelNodeTyp, Value};
 
+pub use self::{filter::PhysicalFilter, join::PhysicalNestedLoopJoin, scan::PhysicalScan};
 pub use filter::LogicalFilter;
 pub use join::{JoinType, LogicalJoin};
 use pretty_xmlish::{Pretty, PrettyConfig};
 pub use scan::LogicalScan;
-
-use self::{filter::PhysicalFilter, scan::PhysicalScan, join::PhysicalNestedLoopJoin};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum OptRelNodeTyp {
@@ -25,7 +26,7 @@ pub enum OptRelNodeTyp {
     PhysicalProjection,
     PhysicalFilter,
     PhysicalScan,
-    PhysicalNestedLoopJoin,
+    PhysicalNestedLoopJoin(JoinType),
     // Expressions
     Constant,
     ColumnRef,
@@ -42,7 +43,7 @@ impl OptRelNodeTyp {
         | Self::Join(_)
         | Self::PhysicalProjection
         | Self::PhysicalFilter
-        | Self::PhysicalNestedLoopJoin
+        | Self::PhysicalNestedLoopJoin(_)
         | Self::PhysicalScan = self
         {
             true
@@ -246,9 +247,17 @@ pub fn explain(rel_node: OptRelNodeRef) -> Pretty<'static> {
         OptRelNodeTyp::PhysicalScan => PhysicalScan::from_rel_node(rel_node)
             .unwrap()
             .dispatch_explain(),
-        OptRelNodeTyp::PhysicalNestedLoopJoin => PhysicalNestedLoopJoin::from_rel_node(rel_node)
+        OptRelNodeTyp::PhysicalNestedLoopJoin(_) => PhysicalNestedLoopJoin::from_rel_node(rel_node)
             .unwrap()
             .dispatch_explain(),
         _ => unimplemented!(),
     }
+}
+
+fn replace_typ(node: OptRelNodeRef, target_type: OptRelNodeTyp) -> OptRelNodeRef {
+    Arc::new(RelNode {
+        typ: target_type,
+        children: node.children.clone(),
+        data: node.data.clone(),
+    })
 }

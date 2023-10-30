@@ -4,7 +4,7 @@ use pretty_xmlish::Pretty;
 
 use crate::rel_node::{RelNode, Value};
 
-use super::{OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
+use super::{replace_typ, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
 
 #[derive(Clone, Debug)]
 pub struct LogicalScan(pub PlanNode);
@@ -46,20 +46,19 @@ impl LogicalScan {
     }
 }
 
-
 #[derive(Clone, Debug)]
-pub struct PhysicalScan(pub PlanNode);
+pub struct PhysicalScan(pub LogicalScan);
 
 impl OptRelNode for PhysicalScan {
     fn into_rel_node(self) -> OptRelNodeRef {
-        self.0.into_rel_node()
+        replace_typ(self.0.into_rel_node(), OptRelNodeTyp::PhysicalScan)
     }
 
     fn from_rel_node(rel_node: OptRelNodeRef) -> Option<Self> {
-        if rel_node.typ != OptRelNodeTyp::Scan {
+        if rel_node.typ != OptRelNodeTyp::PhysicalScan {
             return None;
         }
-        PlanNode::from_rel_node(rel_node).map(Self)
+        LogicalScan::from_rel_node(replace_typ(rel_node, OptRelNodeTyp::Scan)).map(Self)
     }
 
     fn dispatch_explain(&self) -> Pretty<'static> {
@@ -71,18 +70,11 @@ impl OptRelNode for PhysicalScan {
 }
 
 impl PhysicalScan {
-    pub fn new(table: String) -> PhysicalScan {
-        PhysicalScan(PlanNode(
-            RelNode {
-                typ: OptRelNodeTyp::Scan,
-                children: vec![],
-                data: Some(Value::String(table.into())),
-            }
-            .into(),
-        ))
+    pub fn new(node: LogicalScan) -> PhysicalScan {
+        Self(node)
     }
 
     pub fn table(&self) -> Arc<str> {
-        self.clone().into_rel_node().data.as_ref().unwrap().as_str()
+        self.0.table()
     }
 }

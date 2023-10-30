@@ -2,7 +2,7 @@ use pretty_xmlish::Pretty;
 
 use crate::rel_node::RelNode;
 
-use super::{Expr, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
+use super::{replace_typ, Expr, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
 
 #[derive(Clone, Debug)]
 pub struct LogicalFilter(pub PlanNode);
@@ -53,18 +53,18 @@ impl LogicalFilter {
 }
 
 #[derive(Clone, Debug)]
-pub struct PhysicalFilter(pub PlanNode);
+pub struct PhysicalFilter(pub LogicalFilter);
 
 impl OptRelNode for PhysicalFilter {
     fn into_rel_node(self) -> OptRelNodeRef {
-        self.0.into_rel_node()
+        replace_typ(self.0.into_rel_node(), OptRelNodeTyp::PhysicalFilter)
     }
 
     fn from_rel_node(rel_node: OptRelNodeRef) -> Option<Self> {
-        if rel_node.typ != OptRelNodeTyp::Filter {
+        if rel_node.typ != OptRelNodeTyp::PhysicalFilter {
             return None;
         }
-        PlanNode::from_rel_node(rel_node).map(Self)
+        LogicalFilter::from_rel_node(replace_typ(rel_node, OptRelNodeTyp::Filter)).map(Self)
     }
 
     fn dispatch_explain(&self) -> Pretty<'static> {
@@ -78,24 +78,17 @@ impl OptRelNode for PhysicalFilter {
 
 impl PhysicalFilter {
     /// Creates a new `PhysicalFilter` plan node.
-    pub fn new(child: PlanNode, cond: Expr) -> Self {
-        PhysicalFilter(PlanNode(
-            RelNode {
-                typ: OptRelNodeTyp::Filter,
-                children: vec![child.into_rel_node(), cond.into_rel_node()],
-                data: None,
-            }
-            .into(),
-        ))
+    pub fn new(node: LogicalFilter) -> Self {
+        PhysicalFilter(node)
     }
 
     /// Gets the child plan node.
     pub fn child(&self) -> PlanNode {
-        PlanNode::from_rel_node(self.clone().into_rel_node().children[0].clone()).unwrap()
+        self.0.child()
     }
 
     /// Gets the filter condition.
     pub fn cond(&self) -> Expr {
-        Expr::from_rel_node(self.clone().into_rel_node().children[1].clone()).unwrap()
+        self.0.cond()
     }
 }

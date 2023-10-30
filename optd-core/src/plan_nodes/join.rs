@@ -7,7 +7,7 @@ use pretty_xmlish::Pretty;
 
 use crate::rel_node::RelNode;
 
-use super::{Expr, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
+use super::{replace_typ, Expr, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
 
 #[derive(FromPrimitive, Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum JoinType {
@@ -88,18 +88,21 @@ impl LogicalJoin {
     }
 }
 
-
 #[derive(Clone, Debug)]
-pub struct PhysicalNestedLoopJoin(pub PlanNode);
+pub struct PhysicalNestedLoopJoin(pub LogicalJoin);
 
 impl OptRelNode for PhysicalNestedLoopJoin {
     fn into_rel_node(self) -> OptRelNodeRef {
-        self.0.into_rel_node()
+        let jtp = self.0.join_type();
+        replace_typ(
+            self.0.into_rel_node(),
+            OptRelNodeTyp::PhysicalNestedLoopJoin(jtp),
+        )
     }
 
     fn from_rel_node(rel_node: OptRelNodeRef) -> Option<Self> {
-        if let OptRelNodeTyp::Join(_) = rel_node.typ {
-            PlanNode::from_rel_node(rel_node).map(Self)
+        if let OptRelNodeTyp::PhysicalNestedLoopJoin(x) = rel_node.typ {
+            LogicalJoin::from_rel_node(replace_typ(rel_node, OptRelNodeTyp::Join(x))).map(Self)
         } else {
             None
         }
@@ -118,38 +121,23 @@ impl OptRelNode for PhysicalNestedLoopJoin {
 }
 
 impl PhysicalNestedLoopJoin {
-    pub fn new(left: PlanNode, right: PlanNode, cond: Expr, join_type: JoinType) -> PhysicalNestedLoopJoin {
-        PhysicalNestedLoopJoin(PlanNode(
-            RelNode {
-                typ: OptRelNodeTyp::Join(join_type),
-                children: vec![
-                    left.into_rel_node(),
-                    right.into_rel_node(),
-                    cond.into_rel_node(),
-                ],
-                data: None,
-            }
-            .into(),
-        ))
+    pub fn new(logical_node: LogicalJoin) -> PhysicalNestedLoopJoin {
+        PhysicalNestedLoopJoin(logical_node)
     }
 
     pub fn left_child(&self) -> PlanNode {
-        PlanNode::from_rel_node(self.clone().into_rel_node().children[0].clone()).unwrap()
+        self.0.left_child()
     }
 
     pub fn right_child(&self) -> PlanNode {
-        PlanNode::from_rel_node(self.clone().into_rel_node().children[1].clone()).unwrap()
+        self.0.right_child()
     }
 
     pub fn cond(&self) -> Expr {
-        Expr::from_rel_node(self.clone().into_rel_node().children[2].clone()).unwrap()
+        self.0.cond()
     }
 
     pub fn join_type(&self) -> JoinType {
-        if let OptRelNodeTyp::Join(jty) = self.0 .0.typ {
-            jty
-        } else {
-            unreachable!()
-        }
+        self.0.join_type()
     }
 }

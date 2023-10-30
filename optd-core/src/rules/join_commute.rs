@@ -37,7 +37,7 @@ pub struct JoinAssocRule {}
 
 impl Rule<OptRelNodeTyp> for JoinAssocRule {
     fn matches(&self, typ: OptRelNodeTyp, _data: Option<Value>) -> bool {
-        matches!( typ, OptRelNodeTyp::Join(_))
+        matches!(typ, OptRelNodeTyp::Join(_))
     }
 
     fn apply(&self, input: OptRelNodeRef) -> Vec<OptRelNodeRef> {
