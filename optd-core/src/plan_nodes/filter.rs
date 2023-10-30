@@ -36,7 +36,6 @@ impl LogicalFilter {
                 typ: OptRelNodeTyp::Filter,
                 children: vec![child.into_rel_node(), cond.into_rel_node()],
                 data: None,
-                is_logical: true,
             }
             .into(),
         ))

@@ -46,7 +46,12 @@ impl std::fmt::Display for OptRelNodeTyp {
     }
 }
 
-impl RelNodeTyp for OptRelNodeTyp {}
+impl RelNodeTyp for OptRelNodeTyp {
+    fn is_logical(&self) -> bool {
+        (OptRelNodeTyp::Projection as usize) <= (*self as usize)
+            && (*self as usize) <= (OptRelNodeTyp::Join as usize)
+    }
+}
 
 pub type OptRelNodeRef = RelNodeRef<OptRelNodeTyp>;
 
@@ -60,9 +65,11 @@ pub trait OptRelNode: 'static + Clone {
         explain(self.clone().into_rel_node())
     }
     fn explain_to_string(&self) -> String {
-        let mut config = PrettyConfig::default();
-        config.need_boundaries = false;
-        config.reduced_spaces = false;
+        let mut config = PrettyConfig {
+            need_boundaries: false,
+            reduced_spaces: false,
+            ..Default::default()
+        };
         let mut out = String::new();
         config.unicode(&mut out, &self.explain());
         out
@@ -139,7 +146,6 @@ impl ConstantExpr {
                 typ: OptRelNodeTyp::Constant,
                 children: vec![],
                 data: Some(value),
-                is_logical: false,
             }
             .into(),
         ))
@@ -189,7 +195,6 @@ pub fn column_ref(column_idx: usize) -> ConstantExpr {
             typ: OptRelNodeTyp::ColumnRef,
             children: vec![],
             data: Some(Value::Int(column_idx as i64)),
-            is_logical: false,
         }
         .into(),
     ))

@@ -127,7 +127,7 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
     pub(super) fn mark_rule_fired(&mut self, group_expr_id: ExprId, rule_id: RuleId) {
         self.fired_rules
             .entry(group_expr_id)
-            .or_insert_with(HashSet::new)
+            .or_default()
             .insert(rule_id);
     }
 }

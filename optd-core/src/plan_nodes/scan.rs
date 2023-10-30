@@ -1,4 +1,4 @@
-use std::{ops::Deref, sync::Arc};
+use std::sync::Arc;
 
 use pretty_xmlish::Pretty;
 
@@ -36,7 +36,6 @@ impl LogicalScan {
                 typ: OptRelNodeTyp::Scan,
                 children: vec![],
                 data: Some(Value::String(table.into())),
-                is_logical: true,
             }
             .into(),
         ))

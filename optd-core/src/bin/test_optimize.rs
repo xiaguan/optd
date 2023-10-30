@@ -3,13 +3,12 @@ use std::sync::Arc;
 use optd_core::{
     cascades::CascadesOptimizer,
     plan_nodes::{
-        explain, ConstantExpr, JoinType, LogicalFilter, LogicalJoin, LogicalScan, OptRelNode,
-        PlanNode,
+        ConstantExpr, JoinType, LogicalFilter, LogicalJoin, LogicalScan, OptRelNode, PlanNode,
     },
     rel_node::Value,
     rules::{FilterJoinRule, JoinAssocRule, JoinCommuteRule},
 };
-use pretty_xmlish::PrettyConfig;
+
 use tracing::Level;
 
 pub fn main() {

@@ -11,7 +11,9 @@ use ordered_float::OrderedFloat;
 
 pub type RelNodeRef<T> = Arc<RelNode<T>>;
 
-pub trait RelNodeTyp: PartialEq + Eq + Hash + Clone + Copy + 'static + Display + Debug {}
+pub trait RelNodeTyp: PartialEq + Eq + Hash + Clone + Copy + 'static + Display + Debug {
+    fn is_logical(&self) -> bool;
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Value {
@@ -56,15 +58,13 @@ pub struct RelNode<T: RelNodeTyp> {
     pub typ: T,
     pub children: Vec<RelNodeRef<T>>,
     pub data: Option<Value>,
-    pub is_logical: bool,
 }
 
 impl<T: RelNodeTyp> std::fmt::Display for RelNode<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}", self.typ)?;
-        match self.data {
-            Some(ref data) => write!(f, " {}", data)?,
-            None => {}
+        if let Some(ref data) = self.data {
+            write!(f, " {}", data)?;
         }
         for child in &self.children {
             write!(f, " {}", child)?;

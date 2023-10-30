@@ -13,7 +13,7 @@ pub struct JoinCommuteRule {}
 
 impl Rule<OptRelNodeTyp> for JoinCommuteRule {
     fn matches(&self, typ: OptRelNodeTyp, _data: Option<Value>) -> bool {
-        return typ == OptRelNodeTyp::Join;
+        typ == OptRelNodeTyp::Join
     }
 
     fn apply(&self, input: OptRelNodeRef) -> Vec<OptRelNodeRef> {
@@ -24,7 +24,7 @@ impl Rule<OptRelNodeTyp> for JoinCommuteRule {
             join.cond(),
             join.join_type(),
         ); // TODO: convert cond and join type
-        return vec![new_node.0.into_rel_node().into()];
+        vec![new_node.0.into_rel_node()]
     }
 
     fn name(&self) -> &'static str {
@@ -37,7 +37,7 @@ pub struct JoinAssocRule {}
 
 impl Rule<OptRelNodeTyp> for JoinAssocRule {
     fn matches(&self, typ: OptRelNodeTyp, _data: Option<Value>) -> bool {
-        return typ == OptRelNodeTyp::Join;
+        typ == OptRelNodeTyp::Join
     }
 
     fn apply(&self, input: OptRelNodeRef) -> Vec<OptRelNodeRef> {
@@ -68,10 +68,10 @@ impl Rule<OptRelNodeTyp> for JoinAssocRule {
             )) // TODO(chi): is this rule correct??? cond should be rewritten?
         }
 
-        return results
+        results
             .into_iter()
-            .map(|x| x.0.into_rel_node().into())
-            .collect_vec();
+            .map(|x| x.0.into_rel_node())
+            .collect_vec()
     }
 
     fn name(&self) -> &'static str {

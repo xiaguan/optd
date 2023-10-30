@@ -61,7 +61,6 @@ impl LogicalJoin {
                     cond.into_rel_node(),
                 ],
                 data: Some(Value::Int(join_type as i64)),
-                is_logical: true,
             }
             .into(),
         ))

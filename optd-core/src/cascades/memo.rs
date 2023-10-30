@@ -7,12 +7,8 @@ use std::{
 };
 
 use itertools::Itertools;
-use tracing::trace;
 
-use crate::{
-    plan_nodes::Expr,
-    rel_node::{RelNode, RelNodeRef, RelNodeTyp, Value},
-};
+use crate::rel_node::{RelNode, RelNodeRef, RelNodeTyp, Value};
 
 use super::optimizer::{ExprId, GroupId};
 
@@ -29,9 +25,8 @@ pub struct RelMemoNode<T: RelNodeTyp> {
 impl<T: RelNodeTyp> std::fmt::Display for RelMemoNode<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}", self.typ)?;
-        match self.data {
-            Some(ref data) => write!(f, " {}", data)?,
-            None => {}
+        if let Some(ref data) = self.data {
+            write!(f, " {}", data)?;
         }
         for child in &self.children {
             write!(f, " !{}", child)?;
@@ -123,7 +118,7 @@ impl<T: RelNodeTyp> Memo<T> {
     }
 
     fn add_expr_to_group(&mut self, expr_id: ExprId, group_id: ReducedGroupId) {
-        let group = self.groups.entry(group_id).or_insert_with(Group::default);
+        let group = self.groups.entry(group_id).or_default();
         group.group_exprs.insert(expr_id);
     }
 
@@ -219,7 +214,6 @@ impl<T: RelNodeTyp> Memo<T> {
                 typ: expr.typ,
                 children: selected_nodes,
                 data: expr.data.clone(),
-                is_logical: true,
             });
             result.push(node);
         }

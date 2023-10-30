@@ -1,5 +1,5 @@
 use crate::{
-    plan_nodes::{explain, LogicalFilter, LogicalJoin, OptRelNode, OptRelNodeRef, OptRelNodeTyp},
+    plan_nodes::{LogicalFilter, LogicalJoin, OptRelNode, OptRelNodeRef, OptRelNodeTyp},
     rel_node::Value,
 };
 
@@ -9,7 +9,7 @@ pub struct FilterJoinRule {}
 
 impl Rule<OptRelNodeTyp> for FilterJoinRule {
     fn matches(&self, typ: OptRelNodeTyp, _data: Option<Value>) -> bool {
-        return typ == OptRelNodeTyp::Join;
+        typ == OptRelNodeTyp::Join
     }
 
     fn apply(&self, input: OptRelNodeRef) -> Vec<OptRelNodeRef> {
@@ -20,9 +20,9 @@ impl Rule<OptRelNodeTyp> for FilterJoinRule {
                 LogicalJoin::new(child, join.right_child(), join.cond(), join.join_type()).0,
                 filter.cond(),
             ); // TODO: convert cond and join type
-            return vec![new_node.0.into_rel_node().into()];
+            return vec![new_node.0.into_rel_node()];
         }
-        return vec![];
+        vec![]
     }
 
     fn name(&self) -> &'static str {
