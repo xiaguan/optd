@@ -29,7 +29,7 @@ impl<T: RelNodeTyp> Task<T> for ExploreGroupTask {
             trace!(target: "task_finish", task = "explore_group", result = "already explored, skipping", group_id = %self.group_id);
             return Ok(vec![]);
         }
-        let exprs = optimizer.get_group_exprs(self.group_id);
+        let exprs = optimizer.get_all_exprs_in_group(self.group_id);
         let exprs_cnt = exprs.len();
         for expr in exprs {
             tasks.push(Box::new(OptimizeExpressionTask::new(expr, true)) as Box<dyn Task<T>>);

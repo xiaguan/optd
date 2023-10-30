@@ -23,7 +23,7 @@ impl OptimizeGroupTask {
 impl<T: RelNodeTyp> Task<T> for OptimizeGroupTask {
     fn execute(&self, optimizer: &mut CascadesOptimizer<T>) -> Result<Vec<Box<dyn Task<T>>>> {
         trace!(event = "task_begin", task = "optimize_group", group_id = %self.group_id);
-        let exprs = optimizer.get_group_exprs(self.group_id);
+        let exprs = optimizer.get_all_exprs_in_group(self.group_id);
         let mut tasks = vec![];
         let exprs_cnt = exprs.len();
         for expr in exprs {

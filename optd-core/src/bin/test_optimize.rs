@@ -28,19 +28,9 @@ pub fn main() {
     let scan2 = LogicalScan::new("t2".into());
     let join_cond = ConstantExpr::new(Value::Bool(true));
     let scan3 = LogicalScan::new("t3".into());
-
-    let result = optimizer
-        .optimize(
-            LogicalJoin::new(
-                scan3.0,
-                LogicalJoin::new(filter1.0, scan2.0, join_cond.clone().0, JoinType::Inner).0,
-                join_cond.0,
-                JoinType::Inner,
-            )
-            .0
-            .into_rel_node(),
-        )
-        .unwrap();
+    let join_filter = LogicalJoin::new(filter1.0, scan2.0, join_cond.clone().0, JoinType::Inner);
+    // let fnal = LogicalJoin::new(scan3.0, join_filter.0, join_cond.0, JoinType::Inner);
+    let result = optimizer.optimize(join_filter.0.into_rel_node()).unwrap();
     let mut config = PrettyConfig::default();
     config.need_boundaries = false;
     config.reduced_spaces = true;
