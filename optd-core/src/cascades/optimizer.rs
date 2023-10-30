@@ -74,13 +74,11 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
         for group_id in self.memo.get_all_group_ids() {
             println!("group_id={}", group_id);
             for expr_id in self.memo.get_all_exprs_in_group(group_id) {
-                println!("expr_id={}", expr_id);
                 let memo_node = self.memo.get_expr_memoed(expr_id);
-                println!("{}", memo_node);
-                println!("bindings:");
+                println!("  expr_id={} | {}", expr_id, memo_node);
                 let bindings = self.memo.get_all_expr_bindings(expr_id);
                 for binding in bindings {
-                    println!("{}", binding);
+                    println!("    {}", binding);
                 }
             }
         }

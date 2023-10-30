@@ -7,7 +7,7 @@ use optd_core::{
         PlanNode,
     },
     rel_node::Value,
-    rules::{FilterJoinRule, JoinCommuteRule},
+    rules::{FilterJoinRule, JoinAssocRule, JoinCommuteRule},
 };
 use pretty_xmlish::PrettyConfig;
 use tracing::Level;
@@ -20,6 +20,7 @@ pub fn main() {
 
     let mut optimizer = CascadesOptimizer::new_with_rules(vec![
         Arc::new(JoinCommuteRule {}),
+        Arc::new(JoinAssocRule {}),
         Arc::new(FilterJoinRule {}),
     ]);
     let scan1 = LogicalScan::new("t1".into());
@@ -29,15 +30,12 @@ pub fn main() {
     let join_cond = ConstantExpr::new(Value::Bool(true));
     let scan3 = LogicalScan::new("t3".into());
     let join_filter = LogicalJoin::new(filter1.0, scan2.0, join_cond.clone().0, JoinType::Inner);
-    // let fnal = LogicalJoin::new(scan3.0, join_filter.0, join_cond.0, JoinType::Inner);
-    let result = optimizer.optimize(join_filter.0.into_rel_node()).unwrap();
-    let mut config = PrettyConfig::default();
-    config.need_boundaries = false;
-    config.reduced_spaces = true;
+    let fnal = LogicalJoin::new(scan3.0, join_filter.0, join_cond.0, JoinType::Inner);
+    let result = optimizer.optimize(fnal.0.into_rel_node()).unwrap();
     for node in result {
-        let pretty = explain(node);
-        let mut out = String::new();
-        config.unicode(&mut out, &pretty);
-        println!("{}", out);
+        println!(
+            "{}",
+            PlanNode::from_rel_node(node).unwrap().explain_to_string()
+        );
     }
 }

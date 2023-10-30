@@ -62,7 +62,7 @@ pub trait OptRelNode: 'static + Clone {
     fn explain_to_string(&self) -> String {
         let mut config = PrettyConfig::default();
         config.need_boundaries = false;
-        config.reduced_spaces = true;
+        config.reduced_spaces = false;
         let mut out = String::new();
         config.unicode(&mut out, &self.explain());
         out
