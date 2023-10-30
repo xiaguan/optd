@@ -51,3 +51,51 @@ impl LogicalFilter {
         Expr::from_rel_node(self.clone().into_rel_node().children[1].clone()).unwrap()
     }
 }
+
+#[derive(Clone, Debug)]
+pub struct PhysicalFilter(pub PlanNode);
+
+impl OptRelNode for PhysicalFilter {
+    fn into_rel_node(self) -> OptRelNodeRef {
+        self.0.into_rel_node()
+    }
+
+    fn from_rel_node(rel_node: OptRelNodeRef) -> Option<Self> {
+        if rel_node.typ != OptRelNodeTyp::Filter {
+            return None;
+        }
+        PlanNode::from_rel_node(rel_node).map(Self)
+    }
+
+    fn dispatch_explain(&self) -> Pretty<'static> {
+        Pretty::simple_record(
+            "PhysicalFilter",
+            vec![("cond", self.cond().explain())],
+            vec![self.child().explain()],
+        )
+    }
+}
+
+impl PhysicalFilter {
+    /// Creates a new `PhysicalFilter` plan node.
+    pub fn new(child: PlanNode, cond: Expr) -> Self {
+        PhysicalFilter(PlanNode(
+            RelNode {
+                typ: OptRelNodeTyp::Filter,
+                children: vec![child.into_rel_node(), cond.into_rel_node()],
+                data: None,
+            }
+            .into(),
+        ))
+    }
+
+    /// Gets the child plan node.
+    pub fn child(&self) -> PlanNode {
+        PlanNode::from_rel_node(self.clone().into_rel_node().children[0].clone()).unwrap()
+    }
+
+    /// Gets the filter condition.
+    pub fn cond(&self) -> Expr {
+        Expr::from_rel_node(self.clone().into_rel_node().children[1].clone()).unwrap()
+    }
+}

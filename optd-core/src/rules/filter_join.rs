@@ -9,7 +9,7 @@ pub struct FilterJoinRule {}
 
 impl Rule<OptRelNodeTyp> for FilterJoinRule {
     fn matches(&self, typ: OptRelNodeTyp, _data: Option<Value>) -> bool {
-        typ == OptRelNodeTyp::Join
+        matches!( typ, OptRelNodeTyp::Join(_))
     }
 
     fn apply(&self, input: OptRelNodeRef) -> Vec<OptRelNodeRef> {

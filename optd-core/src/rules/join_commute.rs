@@ -13,7 +13,7 @@ pub struct JoinCommuteRule {}
 
 impl Rule<OptRelNodeTyp> for JoinCommuteRule {
     fn matches(&self, typ: OptRelNodeTyp, _data: Option<Value>) -> bool {
-        typ == OptRelNodeTyp::Join
+        matches!(typ, OptRelNodeTyp::Join(_))
     }
 
     fn apply(&self, input: OptRelNodeRef) -> Vec<OptRelNodeRef> {
@@ -37,7 +37,7 @@ pub struct JoinAssocRule {}
 
 impl Rule<OptRelNodeTyp> for JoinAssocRule {
     fn matches(&self, typ: OptRelNodeTyp, _data: Option<Value>) -> bool {
-        typ == OptRelNodeTyp::Join
+        matches!( typ, OptRelNodeTyp::Join(_))
     }
 
     fn apply(&self, input: OptRelNodeRef) -> Vec<OptRelNodeRef> {

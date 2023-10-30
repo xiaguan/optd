@@ -11,7 +11,8 @@ pub use join::{JoinType, LogicalJoin};
 use pretty_xmlish::{Pretty, PrettyConfig};
 pub use scan::LogicalScan;
 
-#[repr(usize)]
+use self::{filter::PhysicalFilter, scan::PhysicalScan, join::PhysicalNestedLoopJoin};
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum OptRelNodeTyp {
     // Plan nodes
@@ -19,7 +20,12 @@ pub enum OptRelNodeTyp {
     Projection,
     Filter,
     Scan,
-    Join,
+    Join(JoinType),
+    // Physical plan nodes
+    PhysicalProjection,
+    PhysicalFilter,
+    PhysicalScan,
+    PhysicalNestedLoopJoin,
     // Expressions
     Constant,
     ColumnRef,
@@ -30,13 +36,27 @@ pub enum OptRelNodeTyp {
 
 impl OptRelNodeTyp {
     pub fn is_plan_node(&self) -> bool {
-        (OptRelNodeTyp::Projection as usize) <= (*self as usize)
-            && (*self as usize) <= (OptRelNodeTyp::Join as usize)
+        if let Self::Projection
+        | Self::Filter
+        | Self::Scan
+        | Self::Join(_)
+        | Self::PhysicalProjection
+        | Self::PhysicalFilter
+        | Self::PhysicalNestedLoopJoin
+        | Self::PhysicalScan = self
+        {
+            true
+        } else {
+            false
+        }
     }
 
     pub fn is_expression(&self) -> bool {
-        (OptRelNodeTyp::Constant as usize) <= (*self as usize)
-            && (*self as usize) <= (OptRelNodeTyp::Func as usize)
+        if let Self::Constant | Self::ColumnRef | Self::UnOp | Self::BinOp | Self::Func = self {
+            true
+        } else {
+            false
+        }
     }
 }
 
@@ -48,8 +68,11 @@ impl std::fmt::Display for OptRelNodeTyp {
 
 impl RelNodeTyp for OptRelNodeTyp {
     fn is_logical(&self) -> bool {
-        (OptRelNodeTyp::Projection as usize) <= (*self as usize)
-            && (*self as usize) <= (OptRelNodeTyp::Join as usize)
+        if let Self::Projection | Self::Filter | Self::Scan | Self::Join(_) = self {
+            true
+        } else {
+            false
+        }
     }
 }
 
@@ -208,13 +231,22 @@ pub fn explain(rel_node: OptRelNodeRef) -> Pretty<'static> {
         OptRelNodeTyp::Constant => ConstantExpr::from_rel_node(rel_node)
             .unwrap()
             .dispatch_explain(),
-        OptRelNodeTyp::Join => LogicalJoin::from_rel_node(rel_node)
+        OptRelNodeTyp::Join(_) => LogicalJoin::from_rel_node(rel_node)
             .unwrap()
             .dispatch_explain(),
         OptRelNodeTyp::Scan => LogicalScan::from_rel_node(rel_node)
             .unwrap()
             .dispatch_explain(),
         OptRelNodeTyp::Filter => LogicalFilter::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::PhysicalFilter => PhysicalFilter::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::PhysicalScan => PhysicalScan::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::PhysicalNestedLoopJoin => PhysicalNestedLoopJoin::from_rel_node(rel_node)
             .unwrap()
             .dispatch_explain(),
         _ => unimplemented!(),
