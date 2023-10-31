@@ -60,7 +60,7 @@ impl Rule<OptRelNodeTyp> for PhysicalConversionRule {
             }
             OptRelNodeTyp::Scan => {
                 let node = RelRuleNode::Node {
-                    typ: OptRelNodeTyp::Scan,
+                    typ: OptRelNodeTyp::PhysicalScan,
                     children,
                     data,
                 };
@@ -68,7 +68,7 @@ impl Rule<OptRelNodeTyp> for PhysicalConversionRule {
             }
             OptRelNodeTyp::Filter => {
                 let node = RelRuleNode::Node {
-                    typ: OptRelNodeTyp::Filter,
+                    typ: OptRelNodeTyp::PhysicalFilter,
                     children,
                     data,
                 };
