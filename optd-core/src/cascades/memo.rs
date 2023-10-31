@@ -1,5 +1,3 @@
-mod union_find;
-
 use std::{
     collections::{HashMap, HashSet},
     fmt::Display,
@@ -197,7 +195,7 @@ impl<T: RelNodeTyp> Memo<T> {
             })
             .collect::<Vec<_>>();
         let memo_node = RelMemoNode {
-            typ: typ,
+            typ,
             children: children_group_ids,
             data,
         };

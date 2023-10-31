@@ -1,3 +1,4 @@
+mod filter_join;
 mod ir;
 mod join_assoc;
 mod join_commute;
@@ -10,6 +11,7 @@ use crate::{
     rel_node::{RelNodeTyp, Value},
 };
 
+pub use filter_join::FilterJoinPullUpRule;
 pub use ir::{OneOrMany, RuleMatcher};
 pub use join_assoc::{JoinAssocLeftRule, JoinAssocRightRule};
 pub use join_commute::JoinCommuteRule;

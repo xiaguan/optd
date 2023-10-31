@@ -1,11 +1,6 @@
 use std::collections::HashMap;
 
-use itertools::Itertools;
-
-use crate::{
-    plan_nodes::{JoinType, LogicalJoin, OptRelNode, OptRelNodeRef, OptRelNodeTyp},
-    rel_node::Value,
-};
+use crate::plan_nodes::{JoinType, OptRelNodeTyp};
 
 use super::{
     ir::{OneOrMany, RuleMatcher},

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::rel_node::{RelNodeTyp, Value};
+use crate::rel_node::RelNodeTyp;
 
 pub enum RuleMatcher<T: RelNodeTyp> {
     /// Match a node of type `typ`.

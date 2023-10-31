@@ -7,7 +7,10 @@ use optd_core::{
         LogicalScan, OptRelNode, OptRelNodeTyp, PlanNode,
     },
     rel_node::Value,
-    rules::{JoinAssocLeftRule, JoinAssocRightRule, JoinCommuteRule, PhysicalConversionRule},
+    rules::{
+        FilterJoinPullUpRule, JoinAssocLeftRule, JoinAssocRightRule, JoinCommuteRule,
+        PhysicalConversionRule,
+    },
 };
 
 use tracing::Level;
@@ -22,7 +25,7 @@ pub fn main() {
         Arc::new(JoinCommuteRule::new()),
         Arc::new(JoinAssocLeftRule::new()),
         Arc::new(JoinAssocRightRule::new()),
-        // Arc::new(FilterJoinRule {}),
+        Arc::new(FilterJoinPullUpRule::new()),
         Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Scan)),
         Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Join(
             JoinType::Inner,

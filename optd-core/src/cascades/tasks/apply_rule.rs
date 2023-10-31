@@ -90,7 +90,7 @@ fn match_node<T: RelNodeTyp>(
                 for old_pick in &picks {
                     for new_picks in &new_picks {
                         let mut pick = old_pick.clone();
-                        pick.extend(new_picks.into_iter().map(|(k, v)| (*k, v.clone())));
+                        pick.extend(new_picks.iter().map(|(k, v)| (*k, v.clone())));
                         merged_picks.push(pick);
                     }
                 }
