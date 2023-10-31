@@ -1,80 +1,67 @@
-use itertools::Itertools;
+use std::collections::HashMap;
 
-use crate::{
-    plan_nodes::{LogicalJoin, OptRelNode, OptRelNodeRef, OptRelNodeTyp},
-    rel_node::Value,
+use crate::plan_nodes::{JoinType, OptRelNodeTyp};
+
+use super::{
+    ir::{OneOrMany, RuleMatcher},
+    RelRuleNode, Rule,
 };
-
-use super::Rule;
 
 /// Implements A join B = B join A
 /// TODO: should insert a projection to reorder the columns
-pub struct JoinCommuteRule {}
+pub struct JoinCommuteRule {
+    matcher: RuleMatcher<OptRelNodeTyp>,
+}
+
+const LEFT_CHILD: usize = 0;
+const RIGHT_CHILD: usize = 1;
+const COND: usize = 2;
+const JOIN_NODE: usize = 3;
+
+impl JoinCommuteRule {
+    pub fn new() -> Self {
+        Self {
+            matcher: RuleMatcher::MatchAndPickNode {
+                typ: OptRelNodeTyp::Join(JoinType::Inner),
+                pick_to: JOIN_NODE,
+                children: vec![
+                    RuleMatcher::PickOne {
+                        pick_to: LEFT_CHILD,
+                    },
+                    RuleMatcher::PickOne {
+                        pick_to: RIGHT_CHILD,
+                    },
+                    RuleMatcher::PickOne { pick_to: COND },
+                ],
+            },
+        }
+    }
+}
 
 impl Rule<OptRelNodeTyp> for JoinCommuteRule {
-    fn matches(&self, typ: OptRelNodeTyp, _data: Option<Value>) -> bool {
-        matches!(typ, OptRelNodeTyp::Join(_))
+    fn matcher(&self) -> &RuleMatcher<OptRelNodeTyp> {
+        &self.matcher
     }
 
-    fn apply(&self, input: OptRelNodeRef) -> Vec<OptRelNodeRef> {
-        let join = LogicalJoin::from_rel_node(input).unwrap();
-        let new_node = LogicalJoin::new(
-            join.right_child(),
-            join.left_child(),
-            join.cond(),
-            join.join_type(),
-        ); // TODO: convert cond and join type
-        vec![new_node.0.into_rel_node()]
+    fn apply(
+        &self,
+        mut input: HashMap<usize, OneOrMany<RelRuleNode<OptRelNodeTyp>>>,
+    ) -> Vec<RelRuleNode<OptRelNodeTyp>> {
+        let RelRuleNode::Node { typ, data, .. } = input.remove(&JOIN_NODE).unwrap().as_one() else {
+            unreachable!()
+        };
+        let left_child = input.remove(&LEFT_CHILD).unwrap().as_one();
+        let right_child: RelRuleNode<OptRelNodeTyp> = input.remove(&RIGHT_CHILD).unwrap().as_one();
+        let cond = input.remove(&COND).unwrap().as_one();
+        let node = RelRuleNode::Node {
+            typ,
+            children: vec![right_child, left_child, cond],
+            data,
+        };
+        vec![node]
     }
 
     fn name(&self) -> &'static str {
         "join_commute"
-    }
-}
-
-/// Implements A join (B join C) = (A join B) join C
-pub struct JoinAssocRule {}
-
-impl Rule<OptRelNodeTyp> for JoinAssocRule {
-    fn matches(&self, typ: OptRelNodeTyp, _data: Option<Value>) -> bool {
-        matches!(typ, OptRelNodeTyp::Join(_))
-    }
-
-    fn apply(&self, input: OptRelNodeRef) -> Vec<OptRelNodeRef> {
-        let join = LogicalJoin::from_rel_node(input).unwrap();
-        let mut results = vec![];
-        // (A join B) join C -> A join (B join C)
-        if let Some(left_node) = LogicalJoin::from_rel_node(join.left_child().into_rel_node()) {
-            let a = left_node.left_child();
-            let b = left_node.right_child();
-            let c = join.right_child();
-            results.push(LogicalJoin::new(
-                a,
-                LogicalJoin::new(b, c, join.cond(), join.join_type()).0,
-                left_node.cond(),
-                left_node.join_type(),
-            ))
-        }
-        // A join (B join C) -> (A join B) join C
-        if let Some(right_node) = LogicalJoin::from_rel_node(join.right_child().into_rel_node()) {
-            let a = join.left_child();
-            let b = right_node.left_child();
-            let c = right_node.right_child();
-            results.push(LogicalJoin::new(
-                LogicalJoin::new(a, b, join.cond(), join.join_type()).0,
-                c,
-                right_node.cond(),
-                right_node.join_type(),
-            )) // TODO(chi): is this rule correct??? cond should be rewritten?
-        }
-
-        results
-            .into_iter()
-            .map(|x| x.0.into_rel_node())
-            .collect_vec()
-    }
-
-    fn name(&self) -> &'static str {
-        "join_assoc"
     }
 }

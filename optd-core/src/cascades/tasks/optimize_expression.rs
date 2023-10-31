@@ -6,7 +6,8 @@ use crate::{
         optimizer::{CascadesOptimizer, ExprId},
         tasks::{ApplyRuleTask, ExploreGroupTask},
     },
-    rel_node::RelNodeTyp,
+    rel_node::{RelNodeTyp, Value},
+    rules::RuleMatcher,
 };
 
 use super::Task;
@@ -22,6 +23,18 @@ impl OptimizeExpressionTask {
     }
 }
 
+fn top_matches<T: RelNodeTyp>(
+    matcher: &RuleMatcher<T>,
+    match_typ: T,
+    _data: Option<Value>,
+) -> bool {
+    match matcher {
+        RuleMatcher::MatchAndPickNode { typ, .. } => typ == &match_typ,
+        RuleMatcher::MatchNode { typ, .. } => typ == &match_typ,
+        _ => panic!("IR should have root node of match"),
+    }
+}
+
 impl<T: RelNodeTyp> Task<T> for OptimizeExpressionTask {
     fn execute(&self, optimizer: &mut CascadesOptimizer<T>) -> Result<Vec<Box<dyn Task<T>>>> {
         let expr = optimizer.get_expr_memoed(self.expr_id);
@@ -34,7 +47,7 @@ impl<T: RelNodeTyp> Task<T> for OptimizeExpressionTask {
             if self.exploring && rule.is_impl_rule() {
                 continue;
             }
-            if rule.matches(expr.typ, expr.data.clone()) {
+            if top_matches(rule.matcher(), expr.typ, expr.data.clone()) {
                 tasks.push(
                     Box::new(ApplyRuleTask::new(rule_id, self.expr_id, self.exploring))
                         as Box<dyn Task<T>>,

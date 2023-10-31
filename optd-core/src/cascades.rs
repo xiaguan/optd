@@ -5,5 +5,5 @@ mod optimizer;
 mod tasks;
 
 use memo::Memo;
-pub use optimizer::CascadesOptimizer;
+pub use optimizer::{CascadesOptimizer, GroupId};
 use tasks::Task;

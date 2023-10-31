@@ -1,20 +1,21 @@
 use core::fmt;
 use std::fmt::Display;
 
-use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
 use pretty_xmlish::Pretty;
 
 use crate::rel_node::RelNode;
 
 use super::{replace_typ, Expr, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
 
-#[derive(FromPrimitive, Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum JoinType {
     Inner = 1,
     FullOuter,
     LeftOuter,
     RightOuter,
+    Cross,
+    Semi,
+    AntiSemi,
 }
 
 impl Display for JoinType {

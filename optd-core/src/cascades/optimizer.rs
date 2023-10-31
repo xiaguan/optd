@@ -8,7 +8,7 @@ use anyhow::Result;
 
 use crate::{
     rel_node::{RelNodeRef, RelNodeTyp},
-    rules::Rule,
+    rules::{RelRuleNode, Rule},
 };
 
 use super::{memo::RelMemoNodeRef, tasks::OptimizeGroupTask, Memo, Task};
@@ -24,7 +24,7 @@ pub struct CascadesOptimizer<T: RelNodeTyp> {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Default, Hash)]
-pub struct GroupId(pub usize);
+pub struct GroupId(pub(super) usize);
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Default, Hash)]
 pub struct ExprId(pub usize);
@@ -95,6 +95,14 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
         group_id: Option<GroupId>,
     ) -> (GroupId, ExprId) {
         self.memo.add_new_group_expr(expr, group_id)
+    }
+
+    pub(super) fn add_rule_group_expr(
+        &mut self,
+        expr: RelRuleNode<T>,
+        group_id: Option<GroupId>,
+    ) -> (GroupId, ExprId) {
+        self.memo.add_new_rule_group_expr(expr, group_id)
     }
 
     pub(super) fn get_group_id(&self, expr_id: ExprId) -> GroupId {

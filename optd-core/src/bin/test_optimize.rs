@@ -4,10 +4,10 @@ use optd_core::{
     cascades::CascadesOptimizer,
     plan_nodes::{
         BinOpExpr, BinOpType, ColumnRefExpr, ConstantExpr, JoinType, LogicalFilter, LogicalJoin,
-        LogicalScan, OptRelNode, PlanNode,
+        LogicalScan, OptRelNode, OptRelNodeTyp, PlanNode,
     },
     rel_node::Value,
-    rules::{FilterJoinRule, JoinAssocRule, JoinCommuteRule, PhysicalConversionRule},
+    rules::{JoinAssocLeftRule, JoinAssocRightRule, JoinCommuteRule, PhysicalConversionRule},
 };
 
 use tracing::Level;
@@ -19,10 +19,15 @@ pub fn main() {
         .init();
 
     let mut optimizer = CascadesOptimizer::new_with_rules(vec![
-        // Arc::new(JoinCommuteRule {}),
-        // Arc::new(JoinAssocRule {}),
+        Arc::new(JoinCommuteRule::new()),
+        Arc::new(JoinAssocLeftRule::new()),
+        Arc::new(JoinAssocRightRule::new()),
         // Arc::new(FilterJoinRule {}),
-        Arc::new(PhysicalConversionRule {}),
+        Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Scan)),
+        Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Join(
+            JoinType::Inner,
+        ))),
+        Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Filter)),
     ]);
 
     let scan1 = LogicalScan::new("t1".into());

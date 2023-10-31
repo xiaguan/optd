@@ -1,5 +1,6 @@
 //! Typed interface of plan nodes.
 
+mod apply;
 mod expr;
 mod filter;
 mod join;
@@ -9,6 +10,7 @@ use std::sync::Arc;
 
 use crate::rel_node::{RelNode, RelNodeRef, RelNodeTyp};
 
+pub use apply::{ApplyType, LogicalApply};
 pub use expr::{BinOpExpr, BinOpType, ColumnRefExpr, ConstantExpr, FuncExpr, UnOpExpr, UnOpType};
 pub use filter::{LogicalFilter, PhysicalFilter};
 pub use join::{JoinType, LogicalJoin, PhysicalNestedLoopJoin};
@@ -23,6 +25,7 @@ pub enum OptRelNodeTyp {
     Filter,
     Scan,
     Join(JoinType),
+    Apply(ApplyType),
     // Physical plan nodes
     PhysicalProjection,
     PhysicalFilter,
@@ -42,6 +45,7 @@ impl OptRelNodeTyp {
         | Self::Filter
         | Self::Scan
         | Self::Join(_)
+        | Self::Apply(_)
         | Self::PhysicalProjection
         | Self::PhysicalFilter
         | Self::PhysicalNestedLoopJoin(_)
@@ -72,7 +76,8 @@ impl std::fmt::Display for OptRelNodeTyp {
 
 impl RelNodeTyp for OptRelNodeTyp {
     fn is_logical(&self) -> bool {
-        if let Self::Projection | Self::Filter | Self::Scan | Self::Join(_) = self {
+        if let Self::Projection | Self::Filter | Self::Scan | Self::Join(_) | Self::Apply(_) = self
+        {
             true
         } else {
             false
@@ -187,6 +192,9 @@ pub fn explain(rel_node: OptRelNodeRef) -> Pretty<'static> {
             .unwrap()
             .dispatch_explain(),
         OptRelNodeTyp::Filter => LogicalFilter::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::Apply(_) => LogicalApply::from_rel_node(rel_node)
             .unwrap()
             .dispatch_explain(),
         OptRelNodeTyp::PhysicalFilter => PhysicalFilter::from_rel_node(rel_node)

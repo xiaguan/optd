@@ -1,36 +1,78 @@
-use crate::{
-    plan_nodes::{
-        LogicalFilter, LogicalJoin, LogicalScan, OptRelNode, OptRelNodeRef, OptRelNodeTyp,
-        PhysicalFilter, PhysicalNestedLoopJoin, PhysicalScan,
-    },
-    rel_node::{RelNodeTyp, Value},
+use std::collections::HashMap;
+
+use crate::plan_nodes::OptRelNodeTyp;
+
+use super::{
+    ir::{OneOrMany, RuleMatcher},
+    RelRuleNode, Rule,
 };
 
-use super::Rule;
+pub struct PhysicalConversionRule {
+    matcher: RuleMatcher<OptRelNodeTyp>,
+}
 
-pub struct PhysicalConversionRule {}
+impl PhysicalConversionRule {
+    pub fn new(logical_typ: OptRelNodeTyp) -> Self {
+        Self {
+            matcher: RuleMatcher::MatchAndPickNode {
+                typ: logical_typ,
+                pick_to: 0,
+                children: vec![RuleMatcher::IgnoreMany],
+            },
+        }
+    }
+}
 
 impl Rule<OptRelNodeTyp> for PhysicalConversionRule {
-    fn matches(&self, typ: OptRelNodeTyp, _data: Option<Value>) -> bool {
-        typ.is_logical()
+    fn matcher(&self) -> &RuleMatcher<OptRelNodeTyp> {
+        &self.matcher
     }
 
-    fn apply(&self, input: OptRelNodeRef) -> Vec<OptRelNodeRef> {
-        match input.typ {
-            OptRelNodeTyp::Join(_) => {
-                vec![
-                    PhysicalNestedLoopJoin::new(LogicalJoin::from_rel_node(input).unwrap())
-                        .into_rel_node(),
-                ]
+    fn apply(
+        &self,
+        mut input: HashMap<usize, OneOrMany<RelRuleNode<OptRelNodeTyp>>>,
+    ) -> Vec<RelRuleNode<OptRelNodeTyp>> {
+        let RelRuleNode::Node {
+            typ,
+            data,
+            children,
+        } = input.remove(&0).unwrap().as_one()
+        else {
+            unimplemented!()
+        };
+
+        match typ {
+            OptRelNodeTyp::Apply(x) => {
+                let node = RelRuleNode::Node {
+                    typ: OptRelNodeTyp::PhysicalNestedLoopJoin(x.to_join_type()),
+                    children,
+                    data,
+                };
+                vec![node]
+            }
+            OptRelNodeTyp::Join(x) => {
+                let node = RelRuleNode::Node {
+                    typ: OptRelNodeTyp::PhysicalNestedLoopJoin(x),
+                    children,
+                    data,
+                };
+                vec![node]
             }
             OptRelNodeTyp::Scan => {
-                vec![PhysicalScan::new(LogicalScan::from_rel_node(input).unwrap()).into_rel_node()]
+                let node = RelRuleNode::Node {
+                    typ: OptRelNodeTyp::Scan,
+                    children,
+                    data,
+                };
+                vec![node]
             }
             OptRelNodeTyp::Filter => {
-                vec![
-                    PhysicalFilter::new(LogicalFilter::from_rel_node(input).unwrap())
-                        .into_rel_node(),
-                ]
+                let node = RelRuleNode::Node {
+                    typ: OptRelNodeTyp::Filter,
+                    children,
+                    data,
+                };
+                vec![node]
             }
             _ => vec![],
         }
