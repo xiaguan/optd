@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use optd_core::{
     cascades::CascadesOptimizer,
+    cost::OptCostModel,
     plan_nodes::{
         BinOpExpr, BinOpType, ColumnRefExpr, ConstantExpr, JoinType, LogicalFilter, LogicalJoin,
         LogicalScan, OptRelNode, OptRelNodeTyp, PlanNode,
@@ -21,17 +22,25 @@ pub fn main() {
         .with_target(false)
         .init();
 
-    let mut optimizer = CascadesOptimizer::new_with_rules(vec![
-        Arc::new(JoinCommuteRule::new()),
-        Arc::new(JoinAssocLeftRule::new()),
-        Arc::new(JoinAssocRightRule::new()),
-        Arc::new(FilterJoinPullUpRule::new()),
-        Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Scan)),
-        Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Join(
-            JoinType::Inner,
-        ))),
-        Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Filter)),
-    ]);
+    let mut optimizer = CascadesOptimizer::new_with_rules(
+        vec![
+            Arc::new(JoinCommuteRule::new()),
+            Arc::new(JoinAssocLeftRule::new()),
+            Arc::new(JoinAssocRightRule::new()),
+            Arc::new(FilterJoinPullUpRule::new()),
+            Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Scan)),
+            Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Join(
+                JoinType::Inner,
+            ))),
+            Arc::new(PhysicalConversionRule::new(OptRelNodeTyp::Filter)),
+        ],
+        Box::new(OptCostModel::new(
+            [("t1", 1000), ("t2", 100), ("t3", 1)]
+                .into_iter()
+                .map(|(x, y)| (x.to_string(), y))
+                .collect(),
+        )),
+    );
 
     let scan1 = LogicalScan::new("t1".into());
     let filter_cond = BinOpExpr::new(
@@ -47,6 +56,7 @@ pub fn main() {
     let fnal = LogicalJoin::new(scan3.0, join_filter.0, join_cond.0, JoinType::Inner);
     let result = optimizer.optimize(fnal.0.into_rel_node()).unwrap();
     for node in result {
+        println!("cost = {}", optimizer.cost().compute_plan_node_cost(&node));
         println!(
             "{}",
             PlanNode::from_rel_node(node).unwrap().explain_to_string()

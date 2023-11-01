@@ -11,7 +11,9 @@ use ordered_float::OrderedFloat;
 
 pub type RelNodeRef<T> = Arc<RelNode<T>>;
 
-pub trait RelNodeTyp: PartialEq + Eq + Hash + Clone + Copy + 'static + Display + Debug {
+pub trait RelNodeTyp:
+    PartialEq + Eq + Hash + Clone + Copy + 'static + Display + Debug + Send + Sync
+{
     fn is_logical(&self) -> bool;
 }
 

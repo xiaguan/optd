@@ -7,6 +7,7 @@ use std::{
 use anyhow::Result;
 
 use crate::{
+    cost::CostModel,
     rel_node::{RelNodeRef, RelNodeTyp},
     rules::{RelRuleNode, Rule},
 };
@@ -21,6 +22,7 @@ pub struct CascadesOptimizer<T: RelNodeTyp> {
     explored_group: HashSet<GroupId>,
     fired_rules: HashMap<ExprId, HashSet<RuleId>>,
     rules: Arc<[Arc<dyn Rule<T>>]>,
+    cost: Box<dyn CostModel<T>>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Default, Hash)]
@@ -42,7 +44,7 @@ impl Display for ExprId {
 }
 
 impl<T: RelNodeTyp> CascadesOptimizer<T> {
-    pub fn new_with_rules(rules: Vec<Arc<dyn Rule<T>>>) -> Self {
+    pub fn new_with_rules(rules: Vec<Arc<dyn Rule<T>>>, cost: Box<dyn CostModel<T>>) -> Self {
         let tasks = VecDeque::new();
         let memo = Memo::new();
         Self {
@@ -51,11 +53,12 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
             explored_group: HashSet::new(),
             fired_rules: HashMap::new(),
             rules: rules.into(),
+            cost,
         }
     }
 
-    pub fn new() -> Self {
-        Self::new_with_rules(vec![])
+    pub fn cost(&self) -> &dyn CostModel<T> {
+        self.cost.as_ref()
     }
 
     pub(super) fn rules(&self) -> Arc<[Arc<dyn Rule<T>>]> {
