@@ -65,6 +65,20 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
         self.rules.clone()
     }
 
+    pub fn dump(&self) {
+        for group_id in self.memo.get_all_group_ids() {
+            println!("group_id={}", group_id);
+            for expr_id in self.memo.get_all_exprs_in_group(group_id) {
+                let memo_node = self.memo.get_expr_memoed(expr_id);
+                println!("  expr_id={} | {}", expr_id, memo_node);
+                let bindings = self.memo.get_all_expr_bindings(expr_id, false);
+                for binding in bindings {
+                    println!("    {}", binding);
+                }
+            }
+        }
+    }
+
     pub fn optimize(&mut self, root_rel: RelNodeRef<T>) -> Result<Vec<RelNodeRef<T>>> {
         let (group_id, _) = self.add_group_expr(root_rel, None);
         self.tasks

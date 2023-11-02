@@ -42,14 +42,10 @@ impl CostModel<OptRelNodeTyp> for OptCostModel {
         match node {
             OptRelNodeTyp::PhysicalScan => {
                 let table_name = data.as_ref().unwrap().as_str();
-                let row_cnt = self
-                    .table_stat
-                    .get(table_name.as_ref())
-                    .copied()
-                    .unwrap_or(1000);
+                let row_cnt = self.table_stat.get(table_name.as_ref()).copied().unwrap();
                 (row_cnt as f64, row_cnt as f64)
             }
-            OptRelNodeTyp::PhysicalFilter => (children[0], children[0] * 0.1),
+            OptRelNodeTyp::PhysicalFilter => (children[0], children[0] * 0.01),
             OptRelNodeTyp::PhysicalNestedLoopJoin(_) => {
                 (children[0] * children[1], children[0] * children[1] * 0.1)
             }
