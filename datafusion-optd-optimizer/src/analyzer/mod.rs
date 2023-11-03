@@ -43,6 +43,7 @@ pub trait AnalyzerRule {
     /// A human readable name for this analyzer rule
     fn name(&self) -> &str;
 }
+
 /// A rule-based Analyzer.
 #[derive(Clone)]
 pub struct Analyzer {
@@ -81,7 +82,7 @@ impl Analyzer {
         let start_time = Instant::now();
         let mut new_plan = plan.clone();
 
-        // TODO add common rule executor for Analyzer and Optimizer
+        // TODO: add common rule executor for Analyzer and Optimizer
         for rule in &self.rules {
             new_plan = rule
                 .analyze(new_plan, config)

@@ -59,7 +59,7 @@ pub trait OptimizerConfig {
     /// time is used as the value for now()
     fn query_execution_start_time(&self) -> DateTime<Utc>;
 
-    /// Return alias generator used to generate unique aliases for subqueries
+    /// Return alias generator used to generate unique aliases for sub-queries
     fn alias_generator(&self) -> Arc<AliasGenerator>;
 
     fn options(&self) -> &ConfigOptions;
@@ -73,7 +73,7 @@ pub struct OptimizerContext {
     /// expressions such as `now()` to use a literal value instead
     query_execution_start_time: DateTime<Utc>,
 
-    /// Alias generator used to generate unique aliases for subqueries
+    /// Alias generator used to generate unique aliases for sub-queries
     alias_generator: Arc<AliasGenerator>,
 
     options: ConfigOptions,
@@ -98,13 +98,12 @@ impl OptimizerContext {
         self
     }
 
-    /// Specify whether the optimizer should skip rules that produce
-    /// errors, or fail the query
+    /// Specify the query execution start time for this plan
     pub fn with_query_execution_start_time(
         mut self,
-        query_execution_tart_time: DateTime<Utc>,
+        query_execution_start_time: DateTime<Utc>,
     ) -> Self {
-        self.query_execution_start_time = query_execution_tart_time;
+        self.query_execution_start_time = query_execution_start_time;
         self
     }
 

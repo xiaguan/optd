@@ -212,7 +212,7 @@ pub async fn main() -> Result<()> {
         if !rc.is_empty() {
             exec::exec_from_files(rc, &mut ctx, &print_options).await
         }
-        // TODO maybe we can have thiserror for cli but for now let's keep it simple
+        // TODO: maybe we can have `thiserror` for cli but for now let's keep it simple
         return exec::exec_from_repl(&mut ctx, &mut print_options)
             .await
             .map_err(|e| DataFusionError::External(Box::new(e)));

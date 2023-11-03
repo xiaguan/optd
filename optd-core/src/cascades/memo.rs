@@ -222,7 +222,8 @@ impl<T: RelNodeTyp> Memo<T> {
         (group_id, expr_id)
     }
 
-    /// Get the group id of an expression. The group id is volatile, depending on whether the groups are merged.
+    /// Get the group id of an expression.
+    /// The group id is volatile, depending on whether the groups are merged.
     pub fn get_group_id(&self, expr_id: ExprId) -> GroupId {
         let group_id = self
             .expr_id_to_group_id
@@ -239,8 +240,8 @@ impl<T: RelNodeTyp> Memo<T> {
             .clone()
     }
 
-    /// Get all bindings of a group. TODO: this is not efficient. Should decide whether to expand the
-    /// rule based on the matcher.
+    /// Get all bindings of a group.
+    /// TODO: this is not efficient. Should decide whether to expand the rule based on the matcher.
     pub fn get_all_group_bindings(
         &self,
         group_id: GroupId,
@@ -256,8 +257,8 @@ impl<T: RelNodeTyp> Memo<T> {
             .concat()
     }
 
-    /// Get all bindings of an expression. TODO: this is not efficient. Should decide whether to expand the
-    /// rule based on the matcher.
+    /// Get all bindings of an expression.
+    /// TODO: this is not efficient. Should decide whether to expand the rule based on the matcher.
     pub fn get_all_expr_bindings(
         &self,
         expr_id: ExprId,
