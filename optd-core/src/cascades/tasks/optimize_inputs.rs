@@ -84,7 +84,7 @@ impl OptimizeInputsTask {
             );
             return true;
         }
-        return false;
+        false
     }
 
     fn update_winner<T: RelNodeTyp>(
@@ -92,7 +92,7 @@ impl OptimizeInputsTask {
         cost_so_far: &Cost,
         optimizer: &mut CascadesOptimizer<T>,
     ) {
-        let cost = optimizer.cost();
+        let _cost = optimizer.cost();
         let group_id = optimizer.get_group_id(self.expr_id);
         let group_info = optimizer.get_group_info(group_id);
         let mut update_cost = false;
@@ -138,7 +138,6 @@ impl<T: RelNodeTyp> Task<T> for OptimizeInputsTask {
                 trace!(event = "task_finish", task = "optimize_inputs", expr_id = %self.expr_id);
                 return Ok(vec![]);
             }
-            let next_group_idx = next_group_idx;
             if next_group_idx < children.len() {
                 let group_id = children[next_group_idx];
                 let group_idx = next_group_idx;
@@ -163,7 +162,7 @@ impl<T: RelNodeTyp> Task<T> for OptimizeInputsTask {
                         return Ok(vec![
                             Box::new(self.continue_from(
                                 ContinueTask {
-                                    next_group_idx: next_group_idx,
+                                    next_group_idx,
                                     input_cost,
                                     return_from_optimize_group: true,
                                 },
@@ -201,33 +200,33 @@ impl<T: RelNodeTyp> Task<T> for OptimizeInputsTask {
                     }
                 }
                 trace!(event = "task_yield", task = "optimize_inputs", expr_id = %self.expr_id, group_idx = %group_idx);
-                return Ok(vec![Box::new(self.continue_from(
+                Ok(vec![Box::new(self.continue_from(
                     ContinueTask {
                         next_group_idx: group_idx + 1,
                         input_cost,
                         return_from_optimize_group: false,
                     },
                     self.pruning,
-                )) as Box<dyn Task<T>>]);
+                )) as Box<dyn Task<T>>])
             } else {
                 self.update_winner(
                     &cost.compute_cost(&expr.typ, &expr.data, &input_cost),
                     optimizer,
                 );
                 trace!(event = "task_finish", task = "optimize_inputs", expr_id = %self.expr_id);
-                return Ok(vec![]);
+                Ok(vec![])
             }
         } else {
-            let input_cost = self.first_invoke(&children, optimizer);
+            let input_cost = self.first_invoke(children, optimizer);
             trace!(event = "task_yield", task = "optimize_inputs", expr_id = %self.expr_id);
-            return Ok(vec![Box::new(self.continue_from(
+            Ok(vec![Box::new(self.continue_from(
                 ContinueTask {
                     next_group_idx: 0,
                     input_cost,
                     return_from_optimize_group: false,
                 },
                 self.pruning,
-            )) as Box<dyn Task<T>>]);
+            )) as Box<dyn Task<T>>])
         }
     }
 }

@@ -84,18 +84,12 @@ impl Rule<OptRelNodeTyp> for JoinAssocLeftRule {
             typ: top_typ,
             data: top_data,
             ..
-        } = input.remove(&JOIN_NODE_TOP).unwrap().as_one()
-        else {
-            unreachable!()
-        };
+        } = input.remove(&JOIN_NODE_TOP).unwrap().as_one();
         let RelNode {
             typ: down_typ,
             data: down_data,
             ..
-        } = input.remove(&JOIN_NODE_DOWN).unwrap().as_one()
-        else {
-            unreachable!()
-        };
+        } = input.remove(&JOIN_NODE_DOWN).unwrap().as_one();
         let child_a = input.remove(&CHILD_A).unwrap().as_one();
         let child_b = input.remove(&CHILD_B).unwrap().as_one();
         let child_c = input.remove(&CHILD_C).unwrap().as_one();
@@ -115,7 +109,7 @@ impl Rule<OptRelNodeTyp> for JoinAssocLeftRule {
             ],
             data: top_data,
         };
-        vec![node.into()]
+        vec![node]
     }
 
     fn name(&self) -> &'static str {
@@ -136,18 +130,12 @@ impl Rule<OptRelNodeTyp> for JoinAssocRightRule {
             typ: top_typ,
             data: top_data,
             ..
-        } = input.remove(&JOIN_NODE_TOP).unwrap().as_one()
-        else {
-            unreachable!()
-        };
+        } = input.remove(&JOIN_NODE_TOP).unwrap().as_one();
         let RelNode {
             typ: down_typ,
             data: down_data,
             ..
-        } = input.remove(&JOIN_NODE_DOWN).unwrap().as_one()
-        else {
-            unreachable!()
-        };
+        } = input.remove(&JOIN_NODE_DOWN).unwrap().as_one();
         let child_a = input.remove(&CHILD_A).unwrap().as_one();
         let child_b = input.remove(&CHILD_B).unwrap().as_one();
         let child_c = input.remove(&CHILD_C).unwrap().as_one();
@@ -167,7 +155,7 @@ impl Rule<OptRelNodeTyp> for JoinAssocRightRule {
             ],
             data: top_data,
         };
-        vec![node.into()]
+        vec![node]
     }
 
     fn name(&self) -> &'static str {

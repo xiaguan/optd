@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 use crate::rel_node::{RelNode, RelNodeTyp, Value};
 
 #[derive(Default, Clone, Debug, PartialOrd, PartialEq)]

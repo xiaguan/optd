@@ -45,9 +45,7 @@ impl Rule<OptRelNodeTyp> for JoinCommuteRule {
         &self,
         mut input: HashMap<usize, OneOrMany<RelNode<OptRelNodeTyp>>>,
     ) -> Vec<RelNode<OptRelNodeTyp>> {
-        let RelNode { typ, data, .. } = input.remove(&JOIN_NODE).unwrap().as_one() else {
-            unreachable!()
-        };
+        let RelNode { typ, data, .. } = input.remove(&JOIN_NODE).unwrap().as_one();
         let left_child = input.remove(&LEFT_CHILD).unwrap().as_one();
         let right_child = input.remove(&RIGHT_CHILD).unwrap().as_one();
         let cond = input.remove(&COND).unwrap().as_one();
@@ -56,7 +54,7 @@ impl Rule<OptRelNodeTyp> for JoinCommuteRule {
             children: vec![right_child.into(), left_child.into(), cond.into()],
             data,
         };
-        vec![node.into()]
+        vec![node]
     }
 
     fn name(&self) -> &'static str {

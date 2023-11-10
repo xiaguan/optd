@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use optd_core::rel_node::RelNode;
 use optd_core::rules::{OneOrMany, Rule, RuleMatcher};
 
-use crate::plan_nodes::{JoinType, OptRelNodeTyp};
+use crate::plan_nodes::OptRelNodeTyp;
 
 pub struct PhysicalConversionRule {
     matcher: RuleMatcher<OptRelNodeTyp>,
@@ -34,10 +34,7 @@ impl Rule<OptRelNodeTyp> for PhysicalConversionRule {
             typ,
             data,
             children,
-        } = input.remove(&0).unwrap().as_one()
-        else {
-            unimplemented!()
-        };
+        } = input.remove(&0).unwrap().as_one();
 
         match typ {
             OptRelNodeTyp::Apply(x) => {
@@ -46,7 +43,7 @@ impl Rule<OptRelNodeTyp> for PhysicalConversionRule {
                     children,
                     data,
                 };
-                vec![node.into()]
+                vec![node]
             }
             OptRelNodeTyp::Join(x) => {
                 let node = RelNode {
@@ -54,7 +51,7 @@ impl Rule<OptRelNodeTyp> for PhysicalConversionRule {
                     children,
                     data,
                 };
-                vec![node.into()]
+                vec![node]
             }
             OptRelNodeTyp::Scan => {
                 let node = RelNode {
@@ -62,7 +59,7 @@ impl Rule<OptRelNodeTyp> for PhysicalConversionRule {
                     children,
                     data,
                 };
-                vec![node.into()]
+                vec![node]
             }
             OptRelNodeTyp::Filter => {
                 let node = RelNode {
@@ -70,7 +67,7 @@ impl Rule<OptRelNodeTyp> for PhysicalConversionRule {
                     children,
                     data,
                 };
-                vec![node.into()]
+                vec![node]
             }
             _ => vec![],
         }

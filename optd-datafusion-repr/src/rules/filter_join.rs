@@ -64,7 +64,7 @@ impl Rule<OptRelNodeTyp> for FilterJoinPullUpRule {
             children: vec![join_node.into(), filter_cond.into()],
             data: None,
         };
-        vec![filter_node.into()]
+        vec![filter_node]
     }
 
     fn name(&self) -> &'static str {

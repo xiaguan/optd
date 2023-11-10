@@ -1,3 +1,5 @@
+#![allow(clippy::new_without_default)]
+
 use async_trait::async_trait;
 use datafusion::{
     error::Result,

@@ -80,7 +80,7 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
         for group_id in self.memo.get_all_group_ids() {
             let winner = if let Some(ref winner) = self.memo.get_group_info(group_id).winner {
                 if winner.impossible {
-                    format!("winner=<impossible>")
+                    "winner=<impossible>".to_string()
                 } else {
                     format!(
                         "winner={} cost={} {}",
@@ -90,7 +90,7 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
                     )
                 }
             } else {
-                format!("winner=None")
+                "winner=None".to_string()
             };
             println!("group_id={} {}", group_id, winner);
             for expr_id in self.memo.get_all_exprs_in_group(group_id) {

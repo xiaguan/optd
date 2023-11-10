@@ -45,30 +45,25 @@ pub enum OptRelNodeTyp {
 
 impl OptRelNodeTyp {
     pub fn is_plan_node(&self) -> bool {
-        if let Self::Projection
-        | Self::Filter
-        | Self::Scan
-        | Self::Join(_)
-        | Self::Apply(_)
-        | Self::PhysicalProjection
-        | Self::PhysicalFilter
-        | Self::PhysicalNestedLoopJoin(_)
-        | Self::PhysicalScan = self
-        {
-            true
-        } else {
-            false
-        }
+        matches!(
+            self,
+            Self::Projection
+                | Self::Filter
+                | Self::Scan
+                | Self::Join(_)
+                | Self::Apply(_)
+                | Self::PhysicalProjection
+                | Self::PhysicalFilter
+                | Self::PhysicalNestedLoopJoin(_)
+                | Self::PhysicalScan
+        )
     }
 
     pub fn is_expression(&self) -> bool {
-        if let Self::Constant | Self::ColumnRef | Self::UnOp(_) | Self::BinOp(_) | Self::Func(_) =
-            self
-        {
-            true
-        } else {
-            false
-        }
+        matches!(
+            self,
+            Self::Constant | Self::ColumnRef | Self::UnOp(_) | Self::BinOp(_) | Self::Func(_)
+        )
     }
 }
 
@@ -80,12 +75,10 @@ impl std::fmt::Display for OptRelNodeTyp {
 
 impl RelNodeTyp for OptRelNodeTyp {
     fn is_logical(&self) -> bool {
-        if let Self::Projection | Self::Filter | Self::Scan | Self::Join(_) | Self::Apply(_) = self
-        {
-            true
-        } else {
-            false
-        }
+        matches!(
+            self,
+            Self::Projection | Self::Filter | Self::Scan | Self::Join(_) | Self::Apply(_)
+        )
     }
 
     fn group_typ(group_id: GroupId) -> Self {
