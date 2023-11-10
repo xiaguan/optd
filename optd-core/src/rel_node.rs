@@ -74,3 +74,12 @@ impl<T: RelNodeTyp> std::fmt::Display for RelNode<T> {
         write!(f, ")")
     }
 }
+
+impl<T: RelNodeTyp> RelNode<T> {
+    pub fn child(&self, idx: usize) -> RelNodeRef<T> {
+        if idx >= self.children.len() {
+            panic!("child index {} out of range: {}", idx, self);
+        }
+        self.children[idx].clone()
+    }
+}

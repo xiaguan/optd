@@ -4,6 +4,7 @@ use std::{
     sync::Arc,
 };
 
+use anyhow::{bail, Result};
 use itertools::Itertools;
 
 use crate::{
@@ -36,9 +37,22 @@ impl<T: RelNodeTyp> std::fmt::Display for RelMemoNode<T> {
     }
 }
 
+#[derive(Default, Debug, Clone)]
+pub struct Winner {
+    pub impossible: bool,
+    pub expr_id: ExprId,
+    pub cost: f64,
+}
+
+#[derive(Default, Debug, Clone)]
+pub struct GroupInfo {
+    pub winner: Option<Winner>,
+}
+
 #[derive(Default)]
 struct Group {
     group_exprs: HashSet<ExprId>,
+    info: GroupInfo,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Default, Hash)]
@@ -304,5 +318,41 @@ impl<T: RelNodeTyp> Memo<T> {
             .copied()
             .map(|x| x.as_group_id())
             .collect()
+    }
+
+    pub fn get_group_info(&self, group_id: GroupId) -> GroupInfo {
+        self.groups
+            .get(&self.get_reduced_group_id(group_id))
+            .as_ref()
+            .unwrap()
+            .info
+            .clone()
+    }
+
+    pub fn update_group_info(&mut self, group_id: GroupId, group_info: GroupInfo) {
+        let grp = self.groups.get_mut(&self.get_reduced_group_id(group_id));
+        grp.unwrap().info = group_info;
+    }
+
+    pub fn get_best_group_binding(&self, group_id: GroupId) -> Result<RelNodeRef<T>> {
+        let info = self.get_group_info(group_id);
+        if let Some(winner) = info.winner {
+            if !winner.impossible {
+                let expr_id = winner.expr_id;
+                let expr = self.get_expr_memoed(expr_id);
+                let mut children = Vec::new();
+                children.reserve(expr.children.len());
+                for child in &expr.children {
+                    children.push(self.get_best_group_binding(*child)?);
+                }
+                let node = Arc::new(RelNode {
+                    typ: expr.typ,
+                    children,
+                    data: expr.data.clone(),
+                });
+                return Ok(node);
+            }
+        }
+        bail!("no best group binding for group {}", group_id)
     }
 }

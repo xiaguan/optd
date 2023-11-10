@@ -3,7 +3,7 @@ use std::sync::Arc;
 use itertools::Itertools;
 use optd_core::{
     cascades::CascadesOptimizer,
-    cost::{self, OptCostModel},
+    cost::OptCostModel,
     plan_nodes::{
         BinOpExpr, BinOpType, ColumnRefExpr, ConstantExpr, JoinType, LogicalFilter, LogicalJoin,
         LogicalScan, OptRelNode, OptRelNodeTyp, PlanNode,
@@ -56,19 +56,12 @@ pub fn main() {
     let scan3 = LogicalScan::new("t3".into());
     let join_filter = LogicalJoin::new(filter1.0, scan2.0, join_cond.clone().0, JoinType::Inner);
     let fnal = LogicalJoin::new(scan3.0, join_filter.0, join_cond.0, JoinType::Inner);
-    let result = optimizer.optimize(fnal.0.into_rel_node()).unwrap();
+    let node = optimizer.optimize(fnal.0.into_rel_node());
     optimizer.dump();
-    let mut result = result
-        .into_iter()
-        .map(|x| (x.clone(), optimizer.cost().compute_plan_node_cost(&x)))
-        .collect_vec();
-    result.sort_by(|(_, cost1), (_, cost2)| cost1.partial_cmp(cost2).unwrap());
-    if let Some((node, _)) = result.first() {
-        println!(
-            "{}",
-            PlanNode::from_rel_node(node.clone())
-                .unwrap()
-                .explain_to_string()
-        );
-    }
+    println!(
+        "{}",
+        PlanNode::from_rel_node(node.unwrap())
+            .unwrap()
+            .explain_to_string()
+    );
 }

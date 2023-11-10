@@ -4,7 +4,7 @@ use std::{
     sync::Arc,
 };
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 
 use crate::{
     cost::CostModel,
@@ -12,9 +12,18 @@ use crate::{
     rules::{RelRuleNode, Rule},
 };
 
-use super::{memo::RelMemoNodeRef, tasks::OptimizeGroupTask, Memo, Task};
+use super::{
+    memo::{GroupInfo, RelMemoNodeRef},
+    tasks::OptimizeGroupTask,
+    Memo, Task,
+};
 
 pub type RuleId = usize;
+
+#[derive(Default, Clone, Debug)]
+pub struct OptimizerContext {
+    pub upper_bound: Option<f64>,
+}
 
 pub struct CascadesOptimizer<T: RelNodeTyp> {
     memo: Memo<T>,
@@ -23,6 +32,7 @@ pub struct CascadesOptimizer<T: RelNodeTyp> {
     fired_rules: HashMap<ExprId, HashSet<RuleId>>,
     rules: Arc<[Arc<dyn Rule<T>>]>,
     cost: Box<dyn CostModel<T>>,
+    pub ctx: OptimizerContext,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Default, Hash)]
@@ -54,6 +64,7 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
             fired_rules: HashMap::new(),
             rules: rules.into(),
             cost,
+            ctx: OptimizerContext::default(),
         }
     }
 
@@ -67,7 +78,21 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
 
     pub fn dump(&self) {
         for group_id in self.memo.get_all_group_ids() {
-            println!("group_id={}", group_id);
+            let winner = if let Some(ref winner) = self.memo.get_group_info(group_id).winner {
+                if winner.impossible {
+                    format!("winner=<impossible>")
+                } else {
+                    format!(
+                        "winner={} cost={} {}",
+                        winner.expr_id,
+                        winner.cost,
+                        self.memo.get_expr_memoed(winner.expr_id)
+                    )
+                }
+            } else {
+                format!("winner=None")
+            };
+            println!("group_id={} {}", group_id, winner);
             for expr_id in self.memo.get_all_exprs_in_group(group_id) {
                 let memo_node = self.memo.get_expr_memoed(expr_id);
                 println!("  expr_id={} | {}", expr_id, memo_node);
@@ -79,7 +104,7 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
         }
     }
 
-    pub fn optimize(&mut self, root_rel: RelNodeRef<T>) -> Result<Vec<RelNodeRef<T>>> {
+    pub fn optimize(&mut self, root_rel: RelNodeRef<T>) -> Result<RelNodeRef<T>> {
         let (group_id, _) = self.add_group_expr(root_rel, None);
         self.tasks
             .push_back(Box::new(OptimizeGroupTask::new(group_id)));
@@ -88,7 +113,7 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
             let new_tasks = task.execute(self)?;
             self.tasks.extend(new_tasks);
         }
-        Ok(self.memo.get_all_group_bindings(group_id, true))
+        self.memo.get_best_group_binding(group_id)
     }
 
     pub(super) fn get_all_exprs_in_group(&self, group_id: GroupId) -> Vec<ExprId> {
@@ -109,6 +134,14 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
         group_id: Option<GroupId>,
     ) -> (GroupId, ExprId) {
         self.memo.add_new_rule_group_expr(expr, group_id)
+    }
+
+    pub(super) fn get_group_info(&self, group_id: GroupId) -> GroupInfo {
+        self.memo.get_group_info(group_id)
+    }
+
+    pub(super) fn update_group_info(&mut self, group_id: GroupId, group_info: GroupInfo) {
+        self.memo.update_group_info(group_id, group_info)
     }
 
     pub(super) fn get_group_id(&self, expr_id: ExprId) -> GroupId {

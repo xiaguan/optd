@@ -77,15 +77,15 @@ impl LogicalApply {
     }
 
     pub fn left_child(&self) -> PlanNode {
-        PlanNode::from_rel_node(self.clone().into_rel_node().children[0].clone()).unwrap()
+        PlanNode::from_rel_node(self.clone().into_rel_node().child(0)).unwrap()
     }
 
     pub fn right_child(&self) -> PlanNode {
-        PlanNode::from_rel_node(self.clone().into_rel_node().children[1].clone()).unwrap()
+        PlanNode::from_rel_node(self.clone().into_rel_node().child(1)).unwrap()
     }
 
     pub fn cond(&self) -> Expr {
-        Expr::from_rel_node(self.clone().into_rel_node().children[2].clone()).unwrap()
+        Expr::from_rel_node(self.clone().into_rel_node().child(2)).unwrap()
     }
 
     pub fn apply_type(&self) -> ApplyType {

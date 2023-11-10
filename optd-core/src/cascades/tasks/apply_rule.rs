@@ -182,7 +182,8 @@ impl<T: RelNodeTyp> Task<T> for ApplyRuleTask {
                             as Box<dyn Task<T>>,
                     );
                 } else {
-                    tasks.push(Box::new(OptimizeInputsTask::new(expr_id)) as Box<dyn Task<T>>);
+                    tasks
+                        .push(Box::new(OptimizeInputsTask::new(expr_id, true)) as Box<dyn Task<T>>);
                 }
             }
         }
