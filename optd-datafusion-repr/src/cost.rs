@@ -74,7 +74,7 @@ impl CostModel<OptRelNodeTyp> for OptCostModel {
     }
 
     fn accumulate(&self, total_cost: &mut Cost, cost: &Cost) {
-        total_cost.0[ROW_COUNT] += Self::row_cnt(cost);
+        // do not accumulate row count
         total_cost.0[COMPUTE_COST] += Self::compute_cost(cost);
         total_cost.0[IO_COST] += Self::io_cost(cost);
         total_cost.0[0] = Self::weighted_cost(
@@ -97,13 +97,13 @@ impl CostModel<OptRelNodeTyp> for OptCostModel {
             }
             OptRelNodeTyp::PhysicalFilter => {
                 let (row_cnt, _, _) = Self::cost_tuple(&children[0]);
-                let selectivity = 0.1;
+                let selectivity = 0.001;
                 Self::cost(row_cnt * selectivity, row_cnt, 0.0)
             }
             OptRelNodeTyp::PhysicalNestedLoopJoin(_) => {
                 let (row_cnt_1, _, _) = Self::cost_tuple(&children[0]);
                 let (row_cnt_2, _, _) = Self::cost_tuple(&children[1]);
-                let selectivity = 0.1;
+                let selectivity = 0.01;
                 Self::cost(
                     row_cnt_1 * row_cnt_2 * selectivity,
                     row_cnt_1 * row_cnt_2,
@@ -117,7 +117,8 @@ impl CostModel<OptRelNodeTyp> for OptCostModel {
 
     fn compute_plan_node_cost(&self, node: &RelNode<OptRelNodeTyp>) -> Cost {
         let mut cost = self.zero();
-        compute_plan_node_cost(self, node, &mut cost);
+        let top = compute_plan_node_cost(self, node, &mut cost);
+        cost.0[ROW_COUNT] = top.0[ROW_COUNT];
         cost
     }
 }
