@@ -1,4 +1,3 @@
-#[macro_export]
 macro_rules! define_plan_node {
     (
         $struct_name:ident : $meta_typ:tt,
@@ -79,3 +78,5 @@ macro_rules! define_plan_node {
         }
     };
 }
+
+pub(crate) use define_plan_node;

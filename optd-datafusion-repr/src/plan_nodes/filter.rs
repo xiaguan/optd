@@ -1,4 +1,4 @@
-use crate::define_plan_node;
+use super::macros::define_plan_node;
 
 use super::{Expr, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
 
