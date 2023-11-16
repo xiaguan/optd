@@ -7,7 +7,8 @@ use datafusion::{
     physical_plan::{projection::ProjectionExec, ExecutionPlan, PhysicalExpr},
 };
 use optd_datafusion_repr::plan_nodes::{
-    Expr, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PhysicalProjection, PhysicalScan, PlanNode,
+    ColumnRefExpr, Expr, OptRelNode, OptRelNodeRef, OptRelNodeTyp, PhysicalProjection,
+    PhysicalScan, PlanNode,
 };
 
 use crate::OptdPlanContext;
@@ -25,7 +26,19 @@ impl OptdPlanContext<'_> {
     }
 
     fn from_optd_expr(&mut self, expr: Expr) -> Result<(Arc<dyn PhysicalExpr>, String)> {
-        unimplemented!()
+        match expr.typ() {
+            OptRelNodeTyp::ColumnRef => {
+                let expr = ColumnRefExpr::from_rel_node(expr.into_rel_node()).unwrap();
+                let idx = expr.index();
+                Ok((
+                    Arc::new(datafusion::physical_plan::expressions::Column::new(
+                        "<expr>", idx,
+                    )),
+                    "<expr>".to_string(),
+                ))
+            }
+            _ => unimplemented!("{}", expr.into_rel_node()),
+        }
     }
 
     #[async_recursion]

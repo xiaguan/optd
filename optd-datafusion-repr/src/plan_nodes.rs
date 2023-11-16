@@ -179,6 +179,12 @@ impl OptRelNode for PlanNode {
 #[derive(Clone, Debug)]
 pub struct Expr(OptRelNodeRef);
 
+impl Expr {
+    pub fn typ(&self) -> OptRelNodeTyp {
+        self.0.typ
+    }
+}
+
 impl OptRelNode for Expr {
     fn into_rel_node(self) -> OptRelNodeRef {
         self.0
