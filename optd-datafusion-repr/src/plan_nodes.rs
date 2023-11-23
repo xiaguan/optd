@@ -30,6 +30,8 @@ pub use projection::{LogicalProjection, PhysicalProjection};
 pub use scan::{LogicalScan, PhysicalScan};
 pub use sort::{LogicalSort, PhysicalSort};
 
+use self::join::PhysicalHashJoin;
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum OptRelNodeTyp {
     Placeholder(GroupId),
@@ -49,6 +51,7 @@ pub enum OptRelNodeTyp {
     PhysicalScan,
     PhysicalSort,
     PhysicalAgg,
+    PhysicalHashJoin(JoinType),
     PhysicalNestedLoopJoin(JoinType),
     // Expressions
     Constant(ConstantType),
@@ -77,6 +80,7 @@ impl OptRelNodeTyp {
                 | Self::PhysicalScan
                 | Self::PhysicalSort
                 | Self::PhysicalAgg
+                | Self::PhysicalHashJoin(_)
         )
     }
 
@@ -104,7 +108,13 @@ impl RelNodeTyp for OptRelNodeTyp {
     fn is_logical(&self) -> bool {
         matches!(
             self,
-            Self::Projection | Self::Filter | Self::Scan | Self::Join(_) | Self::Apply(_)
+            Self::Projection
+                | Self::Filter
+                | Self::Scan
+                | Self::Join(_)
+                | Self::Apply(_)
+                | Self::Sort
+                | Self::Agg
         )
     }
 
@@ -284,7 +294,39 @@ pub fn explain(rel_node: OptRelNodeRef) -> Pretty<'static> {
         OptRelNodeTyp::PhysicalNestedLoopJoin(_) => PhysicalNestedLoopJoin::from_rel_node(rel_node)
             .unwrap()
             .dispatch_explain(),
-        _ => unimplemented!(),
+        OptRelNodeTyp::Placeholder(_) => unreachable!("should not explain a placeholder"),
+        OptRelNodeTyp::List => {
+            ExprList::from_rel_node(rel_node) // ExprList is the only place that we will have list in the datafusion repr
+                .unwrap()
+                .dispatch_explain()
+        }
+        OptRelNodeTyp::Agg => LogicalAgg::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::Sort => LogicalSort::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::Projection => LogicalProjection::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::PhysicalProjection => PhysicalProjection::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::PhysicalAgg => PhysicalAgg::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::PhysicalSort => PhysicalSort::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::PhysicalHashJoin(_) => PhysicalHashJoin::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::SortOrder(_) => SortOrderExpr::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
+        OptRelNodeTyp::LogOp(_) => LogOpExpr::from_rel_node(rel_node)
+            .unwrap()
+            .dispatch_explain(),
     }
 }
 
