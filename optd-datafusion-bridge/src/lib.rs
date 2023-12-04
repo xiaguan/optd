@@ -26,7 +26,7 @@ use optd_datafusion_repr::{
     DatafusionOptimizer,
 };
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{BTreeSet, HashMap},
     sync::{Arc, Mutex},
 };
 
@@ -83,7 +83,7 @@ pub struct OptdQueryPlanner {
     optimizer: Arc<Mutex<Option<Box<DatafusionOptimizer>>>>,
 }
 
-#[derive(Debug, Eq, PartialEq, Hash)]
+#[derive(Debug, Eq, PartialEq, Hash, PartialOrd, Ord)]
 enum JoinOrder {
     Table(String),
     HashJoin(Box<Self>, Box<Self>),
@@ -106,7 +106,7 @@ impl JoinOrder {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Hash)]
+#[derive(Debug, Eq, PartialEq, Hash, PartialOrd, Ord)]
 enum LogicalJoinOrder {
     Table(String),
     Join(Box<Self>, Box<Self>),
@@ -227,8 +227,8 @@ impl OptdQueryPlanner {
             let bindings = optimizer
                 .optd_optimizer()
                 .get_all_group_physical_bindings(group_id);
-            let mut join_orders = HashSet::new();
-            let mut logical_join_orders = HashSet::new();
+            let mut join_orders = BTreeSet::new();
+            let mut logical_join_orders = BTreeSet::new();
             for binding in bindings {
                 if let Some(join_order) = get_join_order(binding) {
                     logical_join_orders.insert(join_order.into_logical_join_order());
