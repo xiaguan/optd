@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="99 16 308 365" width="308" height="365">
+  <defs/>
+  <g id="optd-cascades-1" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>optd-cascades-1</title>
+    <g id="optd-cascades-1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <rect x="184" y="123" width="136" height="45.319597" fill="white"/>
+        <rect x="184" y="123" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(189 136.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="25.16" y="15">Filter a = 1</tspan>
+        </text>
+      </g>
+      <g id="Graphic_3">
+        <rect x="184" y="229" width="136" height="45.319597" fill="white"/>
+        <rect x="184" y="229" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(189 242.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="14.784" y="15">Join a.x = b.x</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <rect x="99.5" y="335" width="136" height="45.319597" fill="white"/>
+        <rect x="99.5" y="335" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(104.5 348.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="38.256" y="15">Scan a</tspan>
+        </text>
+      </g>
+      <g id="Graphic_5">
+        <rect x="270" y="335" width="136" height="45.319597" fill="white"/>
+        <rect x="270" y="335" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(275 348.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="37.808" y="15">Scan b</tspan>
+        </text>
+      </g>
+      <g id="Line_6">
+        <line x1="185.5637" y1="335" x2="233.9363" y2="274.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_7">
+        <line x1="319.61564" y1="335" x2="270.38436" y2="274.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_8">
+        <line x1="252" y1="229" x2="252" y2="168.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_9">
+        <rect x="184" y="17" width="136" height="45.319597" fill="white"/>
+        <rect x="184" y="17" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(189 30.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="14.256" y="15">Projection a.y</tspan>
+        </text>
+      </g>
+      <g id="Line_10">
+        <line x1="252" y1="123" x2="252" y2="62.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

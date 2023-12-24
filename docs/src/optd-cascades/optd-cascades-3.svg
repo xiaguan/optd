@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="183 -67 359 347" width="359" height="347">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_2" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-9 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M -8 0 L 0 3 L 0 -3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g id="optd-cascades-3" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>optd-cascades-3</title>
+    <g id="optd-cascades-3_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_9">
+        <rect x="184" y="17" width="136" height="45.319597" fill="white"/>
+        <rect x="184" y="17" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(189 30.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="6.544" y="15">Optimize Group</tspan>
+        </text>
+      </g>
+      <g id="Graphic_47">
+        <rect x="184" y="125.5" width="136" height="45.319597" fill="white"/>
+        <rect x="184" y="125.5" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(189 138.9358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="12.48" y="15">Optimize Expr</tspan>
+        </text>
+      </g>
+      <g id="Graphic_48">
+        <rect x="184" y="234" width="136" height="45.319597" fill="white"/>
+        <rect x="184" y="234" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(189 247.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="11.44" y="15">Explore Group</tspan>
+        </text>
+      </g>
+      <g id="Graphic_49">
+        <rect x="405.5" y="17" width="136" height="45.319597" fill="white"/>
+        <rect x="405.5" y="17" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(410.5 30.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="6.688" y="15">Optimize Inputs</tspan>
+        </text>
+      </g>
+      <g id="Graphic_50">
+        <rect x="405.5" y="125.5" width="136" height="45.319597" fill="white"/>
+        <rect x="405.5" y="125.5" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(410.5 138.9358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="24.328" y="15">Apply Rule</tspan>
+        </text>
+      </g>
+      <g id="Line_51">
+        <line x1="253" y1="-65.64844" x2="252.30918" y2="7.100446" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_52">
+        <line x1="329.9" y1="39.6598" x2="395.6" y2="39.6598" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_54">
+        <line x1="329.9" y1="148.1598" x2="395.6" y2="148.1598" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_55">
+        <line x1="252" y1="180.7196" x2="252" y2="224.1" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_56">
+        <line x1="473.5" y1="125.5" x2="473.5" y2="72.2196" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_57">
+        <line x1="252" y1="62.3196" x2="252" y2="115.6" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

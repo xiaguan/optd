@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="186 -70 450 636" width="450" height="636">
+  <defs/>
+  <g id="optd-cascades-4" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>optd-cascades-4</title>
+    <g id="optd-cascades-4_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_33">
+        <rect x="187" y="-41.5" width="448" height="606.5" fill="white"/>
+        <rect x="187" y="-41.5" width="448" height="606.5" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_31">
+        <rect x="232" y="190.91797" width="136" height="45.319597" fill="white"/>
+        <rect x="232" y="190.91797" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(237 204.35377)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="15.376" y="15">NLJ a.x = b.x</tspan>
+        </text>
+      </g>
+      <g id="Graphic_30">
+        <rect x="206" y="296.49574" width="86.424" height="45.319597" fill="white"/>
+        <rect x="206" y="296.49574" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(211 309.93154)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="9.164002" y="15">Group 3</tspan>
+        </text>
+      </g>
+      <g id="Line_28">
+        <line x1="260.11246" y1="296.49574" x2="289.09954" y2="236.23757" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_25">
+        <text transform="translate(192 -64.948)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15">Group 2 - Join</tspan>
+        </text>
+      </g>
+      <g id="Graphic_34">
+        <rect x="307.636" y="296.49574" width="86.424" height="45.319597" fill="white"/>
+        <rect x="307.636" y="296.49574" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(312.636 309.93154)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="9.164002" y="15">Group 4</tspan>
+        </text>
+      </g>
+      <g id="Line_36">
+        <line x1="339.93467" y1="296.49574" x2="310.91333" y2="236.23757" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_51">
+        <rect x="450.5" y="190.91797" width="136" height="45.319597" fill="white"/>
+        <rect x="450.5" y="190.91797" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(455.5 204.35377)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="15.376" y="15">NLJ a.x = b.x</tspan>
+        </text>
+      </g>
+      <g id="Graphic_50">
+        <rect x="424.5" y="296.49574" width="86.424" height="45.319597" fill="white"/>
+        <rect x="424.5" y="296.49574" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(429.5 309.93154)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="9.164002" y="15">Group 4</tspan>
+        </text>
+      </g>
+      <g id="Line_49">
+        <line x1="478.61246" y1="296.49574" x2="507.59954" y2="236.23757" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_48">
+        <rect x="526.136" y="296.49574" width="86.424" height="45.319597" fill="white"/>
+        <rect x="526.136" y="296.49574" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(531.136 309.93154)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="11.388002" y="15">Group3</tspan>
+        </text>
+      </g>
+      <g id="Line_47">
+        <line x1="558.43467" y1="296.49574" x2="529.41333" y2="236.23757" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_52">
+        <text transform="translate(253.92 163.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15">Expression 3</tspan>
+        </text>
+      </g>
+      <g id="Graphic_53">
+        <text transform="translate(472.42 163.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15">Expression 4</tspan>
+        </text>
+      </g>
+      <g id="Graphic_65">
+        <rect x="233" y="394.83594" width="136" height="45.319597" fill="white"/>
+        <rect x="233" y="394.83594" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(238 408.78574)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="15" fill="black" x=".435" y="14">HashJoin a.x = b.x</tspan>
+        </text>
+      </g>
+      <g id="Graphic_64">
+        <rect x="207" y="500.4137" width="86.424" height="45.319597" fill="white"/>
+        <rect x="207" y="500.4137" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(212 513.8495)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="9.164002" y="15">Group 3</tspan>
+        </text>
+      </g>
+      <g id="Line_63">
+        <line x1="261.11246" y1="500.4137" x2="290.09954" y2="440.15553" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_62">
+        <rect x="308.636" y="500.4137" width="86.424" height="45.319597" fill="white"/>
+        <rect x="308.636" y="500.4137" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(313.636 513.8495)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="9.164002" y="15">Group 4</tspan>
+        </text>
+      </g>
+      <g id="Line_61">
+        <line x1="340.93467" y1="500.4137" x2="311.91333" y2="440.15553" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_60">
+        <rect x="451.5" y="394.83594" width="136" height="45.319597" fill="white"/>
+        <rect x="451.5" y="394.83594" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(456.5 408.78574)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="15" fill="black" x=".435" y="14">HashJoin a.x = b.x</tspan>
+        </text>
+      </g>
+      <g id="Graphic_59">
+        <rect x="425.5" y="500.4137" width="86.424" height="45.319597" fill="white"/>
+        <rect x="425.5" y="500.4137" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(430.5 513.8495)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="9.164002" y="15">Group 4</tspan>
+        </text>
+      </g>
+      <g id="Line_58">
+        <line x1="479.61246" y1="500.4137" x2="508.59954" y2="440.15553" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_57">
+        <rect x="527.136" y="500.4137" width="86.424" height="45.319597" fill="white"/>
+        <rect x="527.136" y="500.4137" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(532.136 513.8495)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="11.388002" y="15">Group3</tspan>
+        </text>
+      </g>
+      <g id="Line_56">
+        <line x1="559.43467" y1="500.4137" x2="530.41333" y2="440.15553" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_55">
+        <text transform="translate(254.92 367.41797)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15">Expression 5</tspan>
+        </text>
+      </g>
+      <g id="Graphic_54">
+        <text transform="translate(473.42 367.41797)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15">Expression 6</tspan>
+        </text>
+      </g>
+      <g id="Graphic_77">
+        <rect x="233" y="-3.5820312" width="136" height="45.319597" fill="white"/>
+        <rect x="233" y="-3.5820312" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(238 9.853768)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="14.784" y="15">Join a.x = b.x</tspan>
+        </text>
+      </g>
+      <g id="Graphic_76">
+        <rect x="207" y="101.99574" width="86.424" height="45.319597" fill="white"/>
+        <rect x="207" y="101.99574" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(212 115.43154)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="9.164002" y="15">Group 3</tspan>
+        </text>
+      </g>
+      <g id="Line_75">
+        <line x1="261.11246" y1="101.99574" x2="290.09954" y2="41.737566" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_74">
+        <rect x="308.636" y="101.99574" width="86.424" height="45.319597" fill="white"/>
+        <rect x="308.636" y="101.99574" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(313.636 115.43154)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="9.164002" y="15">Group 4</tspan>
+        </text>
+      </g>
+      <g id="Line_73">
+        <line x1="340.93467" y1="101.99574" x2="311.91333" y2="41.737566" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_72">
+        <rect x="451.5" y="-3.5820312" width="136" height="45.319597" fill="white"/>
+        <rect x="451.5" y="-3.5820312" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(456.5 9.853768)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="14.784" y="15">Join a.x = b.x</tspan>
+        </text>
+      </g>
+      <g id="Graphic_71">
+        <rect x="425.5" y="101.99574" width="86.424" height="45.319597" fill="white"/>
+        <rect x="425.5" y="101.99574" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(430.5 115.43154)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="9.164002" y="15">Group 4</tspan>
+        </text>
+      </g>
+      <g id="Line_70">
+        <line x1="479.61246" y1="101.99574" x2="508.59954" y2="41.737566" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_69">
+        <rect x="527.136" y="101.99574" width="86.424" height="45.319597" fill="white"/>
+        <rect x="527.136" y="101.99574" width="86.424" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(532.136 115.43154)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="11.388002" y="15">Group3</tspan>
+        </text>
+      </g>
+      <g id="Line_68">
+        <line x1="559.43467" y1="101.99574" x2="530.41333" y2="41.737566" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_67">
+        <text transform="translate(254.92 -31)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15">Expression 1</tspan>
+        </text>
+      </g>
+      <g id="Graphic_66">
+        <text transform="translate(473.42 -31)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15">Expression 2</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
