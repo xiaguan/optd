@@ -60,3 +60,9 @@ optd by default supports a Lisp-style display implementation for plan nodes. The
 And users can implement other explain formats for plan nodes. For example, the optd Datafusion plan node representation implements the tree-style explain format for all plan nodes.
 
 We still have not explained the `typ` field. It is a user-defined enum that contains all plan nodes in the system. For example, the `OptRelNodeTyp` enum, which is the Datafusion representation, contains logical plan nodes like `Projection`, `Join`; physical plan nodes like `NestedLoopJoin`; and expressions like `BinOp`. Besides, optd has one constraint on the enum: it should always contain a `Placeholder(usize)` variant and a `List` variant.
+
+`List` is a special type that may contain variable number of children. It is the only plan node type that is allowed to have non-constant number of children. It is used in the representation of `Projection`, `Aggregation`, etc.
+
+![RelNode projection representation](./optd-cascades/optd-plan-repr-2.svg)
+
+`Placeholder(usize)` is a special type that is only used in the apply rule process. Usually, the `usize` stored in the placeholder is a group id. We will explain this in [Rule Engine](./rule_engine.md).
