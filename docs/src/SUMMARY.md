@@ -1,7 +1,5 @@
 # Summary
 
-- [Introduction](./intro.md)
-
 # The Core Framework
 
 - [Optimizer](./optimizer.md)
