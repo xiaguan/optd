@@ -37,3 +37,7 @@ The documentation is available in the mdbook format in the [docs](docs) director
 * `optd-datafusion-repr`: Representation of Apache Arrow Datafusion plan nodes in optd.
 * `optd-adaptive-demo`: Demo of adaptive optimization capabilities of optd. More information available in the [docs](docs/).
 * `optd-sqlplannertest`: Planner test of optd based on [risinglightdb/sqlplannertest-rs](https://github.com/risinglightdb/sqlplannertest-rs).
+
+# Related Works
+
+* [datafusion-dolomite](https://github.com/datafusion-contrib/datafusion-dolomite)
