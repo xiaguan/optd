@@ -7,3 +7,5 @@ make
 ./dbgen -s 0.001
 mv *.tbl <target-dir>
 ```
+
+This directory is copy-pasted from the RisingLight project.
