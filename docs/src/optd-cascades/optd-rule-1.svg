@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="10 228 541 471" width="541" height="471">
+  <defs/>
+  <g id="optd-rule-1" stroke-opacity="1" stroke-dasharray="none" fill="none" stroke="none" fill-opacity="1">
+    <title>optd-rule-1</title>
+    <g id="optd-rule-1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_3">
+        <rect x="177" y="229" width="136" height="45.319597" fill="white"/>
+        <rect x="177" y="229" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(182 242.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="25.96" y="15">Join(Inner)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <rect x="99.5" y="335" width="136" height="45.319597" fill="white"/>
+        <rect x="99.5" y="335" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(104.5 348.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="13.008" y="15">left = Group A</tspan>
+        </text>
+      </g>
+      <g id="Line_6">
+        <line x1="184.0673" y1="335" x2="228.4327" y2="274.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_16">
+        <rect x="177.61294" y="293.86558" width="54.513684" height="25.363998" fill="white"/>
+        <text transform="translate(182.61294 298.86558)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" x="11.180842" y="12">Left</tspan>
+        </text>
+      </g>
+      <g id="Graphic_31">
+        <rect x="257" y="335" width="136" height="45.319597" fill="white"/>
+        <rect x="257" y="335" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(262 348.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="7.672" y="15">right = Group B</tspan>
+        </text>
+      </g>
+      <g id="Line_30">
+        <line x1="307.89827" y1="335" x2="262.10173" y2="274.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_29">
+        <rect x="259.1679" y="293.86558" width="54.513684" height="25.363998" fill="white"/>
+        <text transform="translate(264.1679 298.86558)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" x="6.968842" y="12">Right</tspan>
+        </text>
+      </g>
+      <g id="Graphic_32">
+        <rect x="414.5" y="335" width="136" height="45.319597" fill="white"/>
+        <rect x="414.5" y="335" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(419.5 348.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="4.712" y="15">cond = RelNode</tspan>
+        </text>
+      </g>
+      <g id="Line_34">
+        <line x1="431.7292" y1="335" x2="295.77078" y2="274.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_33">
+        <rect x="340.72285" y="293.86558" width="54.513684" height="25.363998" fill="white"/>
+        <text transform="translate(345.72285 298.86558)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" x="6.364342" y="12">Cond</tspan>
+        </text>
+      </g>
+      <g id="Graphic_46">
+        <rect x="177" y="441" width="136" height="45.319597" fill="white"/>
+        <rect x="177" y="441" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(182 454.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="25.96" y="15">Join(Inner)</tspan>
+        </text>
+      </g>
+      <g id="Line_44">
+        <line x1="175.02568" y1="547" x2="225.97432" y2="486.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_43">
+        <rect x="171.65813" y="505.8656" width="54.513684" height="25.363998" fill="white"/>
+        <text transform="translate(176.65813 510.8656)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" x="11.180842" y="12">Left</tspan>
+        </text>
+      </g>
+      <g id="Graphic_42">
+        <rect x="257" y="547" width="136" height="45.319597" fill="white"/>
+        <rect x="257" y="547" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(262 560.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="19.08" y="15">c = Group C</tspan>
+        </text>
+      </g>
+      <g id="Line_41">
+        <line x1="307.89827" y1="547" x2="262.10173" y2="486.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_40">
+        <rect x="259.1679" y="505.8656" width="54.513684" height="25.363998" fill="white"/>
+        <text transform="translate(264.1679 510.8656)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" x="6.968842" y="12">Right</tspan>
+        </text>
+      </g>
+      <g id="Graphic_39">
+        <rect x="414.5" y="547" width="136" height="45.319597" fill="white"/>
+        <rect x="414.5" y="547" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(419.5 560.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x=".264" y="15">cond2 = RelNode</tspan>
+        </text>
+      </g>
+      <g id="Line_38">
+        <line x1="431.7292" y1="547" x2="295.77078" y2="486.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_37">
+        <rect x="340.72285" y="505.8656" width="54.513684" height="25.363998" fill="white"/>
+        <text transform="translate(345.72285 510.8656)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" x="6.364342" y="12">Cond</tspan>
+        </text>
+      </g>
+      <g id="Graphic_47">
+        <text transform="translate(15.500001 242.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15">JoinCommuteRule</tspan>
+        </text>
+      </g>
+      <g id="Graphic_48">
+        <text transform="translate(15.5 454.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="8739676e-19" y="15">JoinAssocRule</tspan>
+        </text>
+      </g>
+      <g id="Graphic_58">
+        <rect x="88" y="547" width="136" height="45.319597" fill="white"/>
+        <rect x="88" y="547" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(93 560.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="25.96" y="15">Join(Inner)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_57">
+        <rect x="10.5" y="653" width="136" height="45.319597" fill="white"/>
+        <rect x="10.5" y="653" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(15.5 666.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="19.672" y="15">a = Group A</tspan>
+        </text>
+      </g>
+      <g id="Line_56">
+        <line x1="95.0673" y1="653" x2="139.4327" y2="592.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_55">
+        <rect x="88.61294" y="611.8656" width="54.513684" height="25.363998" fill="white"/>
+        <text transform="translate(93.61294 616.8656)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" x="11.180842" y="12">Left</tspan>
+        </text>
+      </g>
+      <g id="Graphic_54">
+        <rect x="168" y="653" width="136" height="45.319597" fill="white"/>
+        <rect x="168" y="653" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(173 666.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="18.928" y="15">b = Group B</tspan>
+        </text>
+      </g>
+      <g id="Line_53">
+        <line x1="218.89827" y1="653" x2="173.10173" y2="592.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_52">
+        <rect x="170.1679" y="611.8656" width="54.513684" height="25.363998" fill="white"/>
+        <text transform="translate(175.1679 616.8656)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" x="6.968842" y="12">Right</tspan>
+        </text>
+      </g>
+      <g id="Graphic_51">
+        <rect x="325.5" y="653" width="136" height="45.319597" fill="white"/>
+        <rect x="325.5" y="653" width="136" height="45.319597" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(330.5 666.4358)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x=".264" y="15">cond1 = RelNode</tspan>
+        </text>
+      </g>
+      <g id="Line_50">
+        <line x1="342.72922" y1="653" x2="206.77078" y2="592.3196" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_49">
+        <rect x="251.72285" y="611.8656" width="54.513684" height="25.363998" fill="white"/>
+        <text transform="translate(256.72285 616.8656)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" x="6.364342" y="12">Cond</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
