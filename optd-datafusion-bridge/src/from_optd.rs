@@ -1,10 +1,12 @@
 use std::{collections::HashMap, sync::Arc};
 
 use anyhow::{bail, Context, Result};
-use arrow_schema::Schema;
 use async_recursion::async_recursion;
 use datafusion::{
-    arrow::{compute::kernels::filter, datatypes::SchemaRef},
+    arrow::{
+        compute::kernels::filter,
+        datatypes::{Schema, SchemaRef},
+    },
     datasource::source_as_provider,
     logical_expr::Operator,
     physical_expr,

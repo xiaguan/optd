@@ -4,9 +4,9 @@ mod from_optd;
 mod into_optd;
 mod physical_collector;
 
-use arrow_schema::DataType;
 use async_trait::async_trait;
 use datafusion::{
+    arrow::datatypes::DataType,
     catalog::CatalogList,
     error::Result,
     execution::context::{QueryPlanner, SessionState},
