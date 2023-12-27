@@ -5,5 +5,5 @@ mod optimizer;
 mod tasks;
 
 use memo::Memo;
-pub use optimizer::{CascadesOptimizer, GroupId, RelNodeContext};
+pub use optimizer::{CascadesOptimizer, GroupId, OptimizerProperties, RelNodeContext};
 use tasks::Task;

@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use cost::{AdaptiveCostModel, RuntimeAdaptionStorage};
-use optd_core::cascades::{CascadesOptimizer, GroupId};
+use optd_core::cascades::{CascadesOptimizer, GroupId, OptimizerProperties};
 use plan_nodes::{OptRelNode, OptRelNodeRef, OptRelNodeTyp, PlanNode};
 use properties::schema::{Catalog, SchemaPropertyBuilder};
 use rules::{
@@ -39,6 +39,7 @@ impl DatafusionOptimizer {
         &mut self.optimizer
     }
 
+    /// Create an optimizer with default settings: adaptive + partial explore.
     pub fn new_physical(catalog: Box<dyn Catalog>) -> Self {
         let mut rules = PhysicalConversionRule::all_conversions();
         rules.push(Arc::new(HashJoinRule::new()));
@@ -48,22 +49,27 @@ impl DatafusionOptimizer {
         let cost_model = AdaptiveCostModel::new(50);
         Self {
             runtime_statistics: cost_model.get_runtime_map(),
-            optimizer: CascadesOptimizer::new(
+            optimizer: CascadesOptimizer::new_with_prop(
                 rules,
                 Box::new(cost_model),
                 vec![Box::new(SchemaPropertyBuilder::new(catalog))],
+                OptimizerProperties {
+                    partial_explore_iter: Some(1 << 20),
+                    partial_explore_space: Some(1 << 10),
+                },
             ),
             enable_adaptive: true,
         }
     }
 
+    /// The optimizer settings for three-join demo as a perfect optimizer.
     pub fn new_alternative_physical_for_demo(catalog: Box<dyn Catalog>) -> Self {
         let mut rules = PhysicalConversionRule::all_conversions();
         rules.push(Arc::new(HashJoinRule::new()));
         rules.insert(0, Arc::new(JoinCommuteRule::new()));
         rules.insert(1, Arc::new(JoinAssocRule::new()));
         rules.insert(2, Arc::new(ProjectionPullUpJoin::new()));
-        let cost_model = AdaptiveCostModel::new(1000);
+        let cost_model = AdaptiveCostModel::new(1000); // very large decay
         let runtime_statistics = cost_model.get_runtime_map();
         let optimizer = CascadesOptimizer::new(
             rules,
@@ -80,19 +86,27 @@ impl DatafusionOptimizer {
     pub fn optimize(&mut self, root_rel: OptRelNodeRef) -> Result<(GroupId, OptRelNodeRef)> {
         if self.enable_adaptive {
             self.runtime_statistics.lock().unwrap().iter_cnt += 1;
+            self.optimizer.step_clear_winner();
+        } else {
+            self.optimizer.step_clear();
         }
 
-        self.optimizer
-            .optimize_with_on_produce_callback(root_rel, |rel_node, group_id| {
-                if rel_node.typ.is_plan_node() && self.enable_adaptive {
-                    return PhysicalCollector::new(
-                        PlanNode::from_rel_node(rel_node).unwrap(),
-                        group_id,
-                    )
-                    .into_rel_node();
-                }
-                rel_node
-            })
+        let group_id = self.optimizer.step_optimize_rel(root_rel)?;
+
+        let optimized_rel =
+            self.optimizer
+                .step_get_optimize_rel(group_id, |rel_node, group_id| {
+                    if rel_node.typ.is_plan_node() && self.enable_adaptive {
+                        return PhysicalCollector::new(
+                            PlanNode::from_rel_node(rel_node).unwrap(),
+                            group_id,
+                        )
+                        .into_rel_node();
+                    }
+                    rel_node
+                })?;
+
+        Ok((group_id, optimized_rel))
     }
 
     pub fn dump(&self, group_id: Option<GroupId>) {

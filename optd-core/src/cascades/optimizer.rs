@@ -31,7 +31,10 @@ pub struct OptimizerContext {
 
 #[derive(Default, Clone, Debug)]
 pub struct OptimizerProperties {
-    pub no_partial_explore: bool,
+    /// If the number of rules applied exceeds this number, we stop applying logical rules.
+    pub partial_explore_iter: Option<usize>,
+    /// Plan space can be expanded by this number of times before we stop applying logical rules.
+    pub partial_explore_space: Option<usize>,
 }
 
 pub struct CascadesOptimizer<T: RelNodeTyp> {
@@ -79,6 +82,15 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
         cost: Box<dyn CostModel<T>>,
         property_builders: Vec<Box<dyn PropertyBuilderAny<T>>>,
     ) -> Self {
+        Self::new_with_prop(rules, cost, property_builders, Default::default())
+    }
+
+    pub fn new_with_prop(
+        rules: Vec<Arc<dyn Rule<T, Self>>>,
+        cost: Box<dyn CostModel<T>>,
+        property_builders: Vec<Box<dyn PropertyBuilderAny<T>>>,
+        prop: OptimizerProperties,
+    ) -> Self {
         let tasks = VecDeque::new();
         let property_builders: Arc<[_]> = property_builders.into();
         let memo = Memo::new(property_builders.clone());
@@ -91,7 +103,7 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
             cost: cost.into(),
             ctx: OptimizerContext::default(),
             property_builders,
-            prop: OptimizerProperties::default(),
+            prop,
             disabled_rules: HashSet::new(),
         }
     }
@@ -177,15 +189,37 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
         }
     }
 
-    fn fire_optimize_tasks(&mut self, group_id: GroupId) -> Result<()> {
-        if self.prop.no_partial_explore {
-            self.fired_rules.clear();
-            self.explored_group.clear();
-            self.memo.clear_winner();
-        } else {
-            self.memo.clear_winner();
-        }
+    /// Clear the memo table and all optimizer states.
+    pub fn step_clear(&mut self) {
+        self.memo = Memo::new(self.property_builders.clone());
+        self.fired_rules.clear();
+        self.explored_group.clear();
+    }
 
+    /// Clear the winner so that the optimizer can continue to explore the group.
+    pub fn step_clear_winner(&mut self) {
+        self.memo.clear_winner();
+    }
+
+    /// Optimize a `RelNode`.
+    pub fn step_optimize_rel(&mut self, root_rel: RelNodeRef<T>) -> Result<GroupId> {
+        let (group_id, _) = self.add_group_expr(root_rel, None);
+        self.fire_optimize_tasks(group_id)?;
+        Ok(group_id)
+    }
+
+    /// Get the group binding.
+    pub fn step_get_optimize_rel(
+        &self,
+        group_id: GroupId,
+        mut on_produce: impl FnMut(RelNodeRef<T>, GroupId) -> RelNodeRef<T>,
+    ) -> Result<RelNodeRef<T>> {
+        Ok(self
+            .memo
+            .get_best_group_binding(group_id, &mut on_produce)?)
+    }
+
+    fn fire_optimize_tasks(&mut self, group_id: GroupId) -> Result<()> {
         self.tasks
             .push_back(Box::new(OptimizeGroupTask::new(group_id)));
         // get the task from the stack
@@ -198,12 +232,22 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
             iter += 1;
             if !self.ctx.budget_used {
                 let plan_space = self.memo.compute_plan_space();
-                if plan_space - plan_space_begin > (1 << 10) || iter >= (1 << 20) {
-                    println!(
-                        "budget used, not applying logical rules any more. current plan space: {}",
-                        plan_space
-                    );
-                    self.ctx.budget_used = true;
+                if let Some(partial_explore_space) = self.prop.partial_explore_space {
+                    if plan_space - plan_space_begin > partial_explore_space {
+                        println!(
+                            "plan space size budget used, not applying logical rules any more. current plan space: {}",
+                            plan_space
+                        );
+                        self.ctx.budget_used = true;
+                    }
+                } else if let Some(partial_explore_iter) = self.prop.partial_explore_iter {
+                    if iter >= partial_explore_iter {
+                        println!(
+                            "plan explore iter budget used, not applying logical rules any more. current plan space: {}",
+                            plan_space
+                        );
+                        self.ctx.budget_used = true;
+                    }
                 }
             }
         }
@@ -214,20 +258,6 @@ impl<T: RelNodeTyp> CascadesOptimizer<T> {
         let (group_id, _) = self.add_group_expr(root_rel, None);
         self.fire_optimize_tasks(group_id)?;
         self.memo.get_best_group_binding(group_id, &mut |x, _| x)
-    }
-
-    pub fn optimize_with_on_produce_callback(
-        &mut self,
-        root_rel: RelNodeRef<T>,
-        mut on_produce: impl FnMut(RelNodeRef<T>, GroupId) -> RelNodeRef<T>,
-    ) -> Result<(GroupId, RelNodeRef<T>)> {
-        let (group_id, _) = self.add_group_expr(root_rel, None);
-        self.fire_optimize_tasks(group_id)?;
-        Ok((
-            group_id,
-            self.memo
-                .get_best_group_binding(group_id, &mut on_produce)?,
-        ))
     }
 
     pub fn resolve_group_id(&self, root_rel: RelNodeRef<T>) -> GroupId {

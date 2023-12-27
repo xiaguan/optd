@@ -30,7 +30,8 @@ async fn main() -> Result<()> {
         let mut optimizer: DatafusionOptimizer = DatafusionOptimizer::new_physical(Box::new(
             DatafusionCatalog::new(state.catalog_list()),
         ));
-        optimizer.optd_optimizer_mut().prop.no_partial_explore = true;
+        optimizer.optd_optimizer_mut().prop.partial_explore_iter = None;
+        optimizer.optd_optimizer_mut().prop.partial_explore_space = None;
         state = state.with_query_planner(Arc::new(OptdQueryPlanner::new(optimizer)));
         SessionContext::new_with_state(state)
     };
@@ -47,7 +48,8 @@ async fn main() -> Result<()> {
             DatafusionOptimizer::new_alternative_physical_for_demo(Box::new(
                 DatafusionCatalog::new(state.catalog_list()),
             ));
-        optimizer.optd_optimizer_mut().prop.no_partial_explore = true;
+        optimizer.optd_optimizer_mut().prop.partial_explore_iter = None;
+        optimizer.optd_optimizer_mut().prop.partial_explore_space = None;
         perfect_optimizer = Arc::new(OptdQueryPlanner::new(optimizer));
         state = state.with_query_planner(perfect_optimizer.clone());
         SessionContext::new_with_state(state)
