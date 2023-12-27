@@ -3,9 +3,8 @@ use std::{
     task::{Context, Poll},
 };
 
-use arrow_schema::SchemaRef;
 use datafusion::{
-    arrow::record_batch::RecordBatch,
+    arrow::{datatypes::SchemaRef, record_batch::RecordBatch},
     error::{DataFusionError, Result},
     execution::TaskContext,
     physical_plan::{
@@ -51,7 +50,7 @@ impl CollectorExec {
 }
 
 impl ExecutionPlan for CollectorExec {
-    fn schema(&self) -> arrow_schema::SchemaRef {
+    fn schema(&self) -> datafusion::arrow::datatypes::SchemaRef {
         self.input.schema()
     }
 
