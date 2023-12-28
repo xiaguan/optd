@@ -6,14 +6,11 @@
 - [Plan Representation](./plan_repr.md)
 - [Rule Engine](./rule_engine.md)
 - [Cost Model](./cost_model.md)
-
----
-
-- [(WIP) Properties](./properties.md)
+- [Properties](./properties.md)
 
 # Integration
 
-- [(WIP) Apache Arrow Datafusion](./datafusion.md)
+- [Apache Arrow Datafusion](./datafusion.md)
 
 # Adaptive Optimization
 

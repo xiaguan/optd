@@ -5,7 +5,7 @@ optd uses serialized representation of expressions internally. This makes it sup
 *the optd representation -- one universal structure for all things*
 
 ```rust
-pub struct RelNode {
+pub struct RelNode<Typ> {
     pub typ: Typ,
     pub children: Vec<RelNodeRef>,
     pub data: Option<Value>,
@@ -36,8 +36,8 @@ impl Join {
 
 ```rust
 pub struct Join {
-    pub left: RelNode,
-    pub right: RelNode,
+    pub left: RelNode<Typ>,
+    pub right: RelNode<Typ>,
     pub cond: Expression,
     pub join_type: JoinType,
 }
